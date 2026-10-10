@@ -1,0 +1,16 @@
+---
+import { render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { articlePaths } from '../../lib/paths';
+
+export function getStaticPaths() {
+  return articlePaths('security-privacy');
+}
+
+const { entry, related } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<ArticleLayout entry={entry} headings={headings} related={related}>
+  <Content />
+</ArticleLayout>

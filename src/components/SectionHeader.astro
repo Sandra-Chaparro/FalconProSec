@@ -1,0 +1,47 @@
+---
+interface Props {
+  kicker?: string;
+  title: string;
+  description?: string;
+  id?: string;
+  /** Optional "view all" link shown on the right. */
+  link?: { href: string; label: string };
+  level?: 'h1' | 'h2';
+}
+
+const { kicker, title, description, id, link, level = 'h2' } = Astro.props;
+const Heading = level;
+---
+
+<div
+  class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+>
+  <div class="max-w-2xl">
+    {kicker && <p class="kicker mb-3 !text-primary-text">{kicker}</p>}
+    <Heading
+      id={id}
+      class:list={[
+        'font-semibold text-white',
+        level === 'h1' ? 'text-4xl sm:text-5xl' : 'text-2xl sm:text-3xl',
+      ]}
+    >
+      {title}
+    </Heading>
+    {
+      description && (
+        <p class="mt-3 text-base leading-relaxed text-muted">{description}</p>
+      )
+    }
+  </div>
+  {
+    link && (
+      <a
+        href={link.href}
+        class="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-primary-text hover:text-white"
+      >
+        {link.label}
+        <span aria-hidden="true">→</span>
+      </a>
+    )
+  }
+</div>

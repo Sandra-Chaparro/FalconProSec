@@ -1,0 +1,51 @@
+---
+import { formatDate, isoDate } from '../lib/content';
+
+interface Props {
+  label?: string;
+  labelHref?: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  readingTime?: string;
+  draft?: boolean;
+}
+
+const { label, labelHref, pubDate, updatedDate, readingTime, draft } =
+  Astro.props;
+---
+
+<div
+  class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-wide text-subtle uppercase"
+>
+  {draft && <span class="text-amber">Draft · not published</span>}
+  {
+    label &&
+      (labelHref ? (
+        <a href={labelHref} class="text-primary-text hover:text-white">
+          {label}
+        </a>
+      ) : (
+        <span class="text-primary-text">{label}</span>
+      ))
+  }
+  <span aria-hidden="true">·</span>
+  <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
+  {
+    updatedDate && (
+      <>
+        <span aria-hidden="true">·</span>
+        <span>
+          Updated <time datetime={isoDate(updatedDate)}>{formatDate(updatedDate)}</time>
+        </span>
+      </>
+    )
+  }
+  {
+    readingTime && (
+      <>
+        <span aria-hidden="true">·</span>
+        <span>{readingTime}</span>
+      </>
+    )
+  }
+</div>

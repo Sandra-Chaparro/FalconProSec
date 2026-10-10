@@ -1,0 +1,33 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  icon?: IconName;
+  action?: { href: string; label: string };
+}
+
+const { title, description, icon = 'file', action } = Astro.props;
+---
+
+<div
+  class="rounded-xl border border-dashed border-line-strong px-6 py-12 text-center"
+>
+  <Icon name={icon} size={28} class="mx-auto text-subtle" />
+  <p class="mt-4 font-heading text-lg font-semibold text-white">{title}</p>
+  {
+    description && (
+      <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted">
+        {description}
+      </p>
+    )
+  }
+  {
+    action && (
+      <a href={action.href} class="link mt-5 inline-block text-sm">
+        {action.label}
+      </a>
+    )
+  }
+</div>

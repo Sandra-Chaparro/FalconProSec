@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import InvestigationCard from '../../components/InvestigationCard.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { TOPICS } from '../../data/taxonomy';
+import { getArticles, getInvestigations } from '../../lib/content';
+
+export function getStaticPaths() {
+  return TOPICS.map((topic) => ({
+    params: { topic: topic.slug },
+    props: { topic },
+  }));
+}
+
+const { topic } = Astro.props;
+const investigations = (await getInvestigations()).filter(
+  (i) => i.data.topic === topic.slug
+);
+const articles = (await getArticles()).filter((a) =>
+  a.data.topics.includes(topic.slug)
+);
+const empty = investigations.length === 0 && articles.length === 0;
+---
+
+<Layout
+  title={topic.label}
+  description={`${topic.description} Investigations and articles about ${topic.label.toLowerCase()} on FalconProSec.`}
+>
+  <PageHeader
+    kicker="Topic"
+    title={topic.label}
+    description={topic.description}
+    breadcrumbs={[{ label: 'Topics' }, { label: topic.label }]}
+  />
+  <div class="container-site mt-12 space-y-16">
+    {
+      empty ? (
+        <EmptyState
+          title={`Nothing published on ${topic.label} yet`}
+          description="Investigations and articles on this topic will be gathered here once they are published."
+          action={{
+            href: '/contact?reason=investigation',
+            label: 'Suggest a question to investigate',
+          }}
+        />
+      ) : (
+        <>
+          {investigations.length > 0 && (
+            <section aria-labelledby="inv-heading">
+              <SectionHeader id="inv-heading" title="Investigations" />
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {investigations.map((item) => (
+                  <InvestigationCard item={item} />
+                ))}
+              </div>
+            </section>
+          )}
+          {articles.length > 0 && (
+            <section aria-labelledby="art-heading">
+              <SectionHeader id="art-heading" title="Articles" />
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {articles.map((a) => (
+                  <ArticleCard article={a} showSection />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )
+    }
+  </div>
+</Layout>

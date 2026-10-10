@@ -1,0 +1,12 @@
+---
+import SectionCategory from '../../../components/section/SectionCategory.astro';
+import { categoryPaths } from '../../../lib/paths';
+
+export function getStaticPaths() {
+  return categoryPaths('technology');
+}
+
+const { category } = Astro.props;
+---
+
+<SectionCategory section="technology" category={category} />

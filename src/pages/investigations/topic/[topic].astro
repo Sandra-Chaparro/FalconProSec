@@ -1,0 +1,49 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import EmptyState from '../../../components/EmptyState.astro';
+import InvestigationCard from '../../../components/InvestigationCard.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import { TOPICS } from '../../../data/taxonomy';
+import { getInvestigations } from '../../../lib/content';
+
+export function getStaticPaths() {
+  return TOPICS.map((topic) => ({ params: { topic: topic.slug }, props: { topic } }));
+}
+
+const { topic } = Astro.props;
+const items = (await getInvestigations()).filter(
+  (i) => i.data.topic === topic.slug
+);
+---
+
+<Layout
+  title={`${topic.label} investigations`}
+  description={`Investigations about ${topic.label.toLowerCase()}: ${topic.description}`}
+>
+  <PageHeader
+    kicker="Investigations by topic"
+    title={topic.label}
+    description={topic.description}
+    breadcrumbs={[
+      { label: 'Investigations', href: '/investigations' },
+      { label: topic.label },
+    ]}
+  />
+  <div class="container-site mt-12">
+    {
+      items.length ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <InvestigationCard item={item} headingLevel="h2" />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title={`No ${topic.label} investigations yet`}
+          description="Investigations on this topic will be listed here once published."
+          action={{ href: '/investigations', label: 'Back to all investigations' }}
+        />
+      )
+    }
+  </div>
+</Layout>

@@ -1,0 +1,219 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Disclaimer from '../../components/Disclaimer.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import InvestigationCard from '../../components/InvestigationCard.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { OPEN_QUESTIONS, TOPICS } from '../../data/taxonomy';
+import { getInvestigations, pickFeatured } from '../../lib/content';
+
+const investigations = await getInvestigations();
+const lead = pickFeatured(investigations);
+const rest = investigations.filter((i) => i !== lead);
+const usedTopics = new Set(investigations.map((i) => i.data.topic));
+---
+
+<Layout
+  title="Investigations"
+  description="Investigations into real-world questions about cybersecurity, privacy, technology and how information can be exposed or misused."
+>
+  <PageHeader
+    kicker="Investigations"
+    title="Questions, evidence, and what it means"
+    description="Each investigation starts with a specific question, works through publicly available evidence, and explains the findings and their security and privacy implications."
+  >
+    <ol
+      class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-wide text-subtle uppercase"
+      aria-label="Investigation method"
+    >
+      {
+        ['Question', 'Evidence', 'Findings', 'Meaning', 'Implications'].map(
+          (step, i) => (
+            <li>
+              <span class="text-primary-text">
+                {String(i + 1).padStart(2, '0')}
+              </span>{' '}
+              {step}
+            </li>
+          )
+        )
+      }
+    </ol>
+  </PageHeader>
+
+  <div class="container-site mt-12">
+    {
+      investigations.length > 0 ? (
+        <>
+          <form
+            id="investigation-filter"
+            class="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center"
+            role="search"
+            onsubmit="return false"
+          >
+            <label for="investigation-search" class="sr-only">
+              Search investigations
+            </label>
+            <input
+              id="investigation-search"
+              type="search"
+              placeholder="Search investigations…"
+              class="w-full rounded-lg border border-line bg-surface px-4 py-2.5 text-sm text-fg placeholder:text-subtle focus:border-primary/60 focus:outline-none sm:max-w-xs"
+            />
+            <fieldset class="flex flex-wrap gap-2">
+              <legend class="sr-only">Filter by topic</legend>
+              <a
+                href="/investigations"
+                data-topic=""
+                aria-pressed="true"
+                class="topic-chip"
+              >
+                All
+              </a>
+              {TOPICS.filter((t) => usedTopics.has(t.slug)).map((t) => (
+                <a
+                  href={`/investigations/topic/${t.slug}`}
+                  data-topic={t.slug}
+                  aria-pressed="false"
+                  class="topic-chip"
+                >
+                  {t.label}
+                </a>
+              ))}
+            </fieldset>
+          </form>
+
+          {lead && (
+            <div class="mb-8" data-investigation data-topic={lead.data.topic} data-search={`${lead.data.title} ${lead.data.description} ${lead.data.question} ${lead.data.tags.join(' ')}`.toLowerCase()}>
+              <InvestigationCard item={lead} variant="lead" headingLevel="h2" />
+            </div>
+          )}
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {rest.map((item) => (
+              <div
+                data-investigation
+                data-topic={item.data.topic}
+                data-search={`${item.data.title} ${item.data.description} ${item.data.question} ${item.data.tags.join(' ')}`.toLowerCase()}
+              >
+                <InvestigationCard item={item} headingLevel="h2" />
+              </div>
+            ))}
+          </div>
+          <p
+            id="filter-status"
+            class="mt-8 text-sm text-subtle"
+            role="status"
+            aria-live="polite"
+          />
+        </>
+      ) : (
+        <EmptyState
+          icon="search"
+          title="The first investigations are in progress"
+          description="Published investigations will be listed here, with their sources and any corrections. Have a question worth investigating?"
+          action={{
+            href: '/contact?reason=investigation',
+            label: 'Suggest an investigation',
+          }}
+        />
+      )
+    }
+  </div>
+
+  <section class="container-site mt-24" aria-labelledby="open-questions">
+    <SectionHeader
+      id="open-questions"
+      kicker="On the list"
+      title="Questions worth investigating"
+      description="Open questions this site intends to explore. These are not completed investigations."
+    />
+    <ul class="grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
+      {
+        OPEN_QUESTIONS.map((q) => (
+          <li class="flex gap-3 bg-ink p-5 text-fg">
+            <span class="font-mono text-primary-text" aria-hidden="true">
+              ?
+            </span>
+            <span class="font-serif text-lg leading-snug">{q}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-6 text-sm text-muted">
+      Have another question in mind?{' '}
+      <a href="/contact?reason=investigation" class="link">Suggest it</a>.
+    </p>
+  </section>
+
+  <div class="container-site mt-16">
+    <Disclaimer />
+  </div>
+</Layout>
+
+<style>
+  .topic-chip {
+    border-radius: 9999px;
+    border: 1px solid var(--color-line-strong);
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+  .topic-chip:hover {
+    color: white;
+  }
+  .topic-chip[aria-pressed='true'] {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+    color: white;
+  }
+</style>
+
+<script>
+  // Progressive enhancement: without JS the chips link to topic pages.
+  const form = document.getElementById('investigation-filter');
+  const input = document.getElementById(
+    'investigation-search'
+  ) as HTMLInputElement | null;
+  const chips = form?.querySelectorAll<HTMLAnchorElement>('[data-topic]') ?? [];
+  const items = document.querySelectorAll<HTMLElement>('[data-investigation]');
+  const status = document.getElementById('filter-status');
+  let activeTopic = '';
+
+  function apply() {
+    const words = (input?.value ?? '').toLowerCase().trim().split(/\s+/);
+    let visible = 0;
+    items.forEach((el) => {
+      const matchTopic = !activeTopic || el.dataset.topic === activeTopic;
+      const matchText = words.every((w) => el.dataset.search?.includes(w));
+      const show = matchTopic && matchText;
+      el.hidden = !show;
+      if (show) visible++;
+    });
+    if (status) {
+      status.textContent =
+        visible === items.length
+          ? ''
+          : `Showing ${visible} of ${items.length} investigations.`;
+    }
+  }
+
+  chips.forEach((chip) => {
+    chip.setAttribute('role', 'button');
+    chip.addEventListener('click', (e) => {
+      e.preventDefault();
+      activeTopic = chip.dataset.topic ?? '';
+      chips.forEach((c) =>
+        c.setAttribute('aria-pressed', String(c === chip))
+      );
+      apply();
+    });
+    chip.addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        e.preventDefault();
+        chip.click();
+      }
+    });
+  });
+  input?.addEventListener('input', apply);
+</script>

@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+---
+
+<Layout
+  title="Message sent"
+  description="Your message to FalconProSec has been sent."
+  noindex
+>
+  <PageHeader
+    kicker="Contact"
+    title="Thank you, your message has been sent"
+    description="Thanks for taking the time to write. If you asked a question or suggested a correction, you will get a reply at the email address you provided."
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/investigations" class="btn-primary">Explore Investigations</a>
+      <a href="/" class="btn-secondary">Back to home</a>
+    </div>
+  </PageHeader>
+</Layout>

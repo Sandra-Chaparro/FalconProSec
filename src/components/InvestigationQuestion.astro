@@ -1,0 +1,15 @@
+---
+interface Props {
+  question: string;
+  label?: string;
+}
+
+const { question, label = 'The question' } = Astro.props;
+---
+
+<div class="rounded-xl border border-line border-l-4 border-l-primary bg-surface p-6 sm:p-8">
+  <p class="kicker !text-primary-text">{label}</p>
+  <p class="mt-2 font-serif text-xl leading-snug text-white italic sm:text-2xl">
+    {question}
+  </p>
+</div>

@@ -1,0 +1,38 @@
+---
+/**
+ * Small inline stroke icon set (paths adapted from Lucide, ISC licence).
+ * Icons are decorative by default; pass `label` to expose one to screen readers.
+ */
+import { ICONS, type IconName } from './icons';
+
+export type { IconName };
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+  label?: string;
+  strokeWidth?: number;
+}
+
+const { name, size = 20, class: className, label, strokeWidth = 1.75 } =
+  Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={ICONS[name]}
+/>

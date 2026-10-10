@@ -1,0 +1,30 @@
+---
+import Breadcrumbs, { type Crumb } from './Breadcrumbs.astro';
+
+interface Props {
+  kicker?: string;
+  title: string;
+  description?: string;
+  breadcrumbs?: Crumb[];
+}
+
+const { kicker, title, description, breadcrumbs } = Astro.props;
+---
+
+<section class="relative overflow-hidden border-b border-line">
+  <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true">
+  </div>
+  <div class="container-site relative py-14 sm:py-20">
+    {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+    {kicker && <p class="kicker mb-4 !text-primary-text">{kicker}</p>}
+    <h1 class="max-w-3xl text-4xl font-semibold sm:text-5xl">{title}</h1>
+    {
+      description && (
+        <p class="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
+          {description}
+        </p>
+      )
+    }
+    <slot />
+  </div>
+</section>

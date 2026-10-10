@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<Layout title="Page not found" description="This page could not be found." noindex>
+  <PageHeader
+    kicker="404"
+    title="This page could not be found"
+    description="The page may have moved, or the link may be mistyped. Try searching the site, or start from one of the sections below."
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/" class="btn-primary">Home</a>
+      <a href="/investigations" class="btn-secondary">Investigations</a>
+      <a href="/tools" class="btn-secondary">Tools</a>
+    </div>
+  </PageHeader>
+</Layout>

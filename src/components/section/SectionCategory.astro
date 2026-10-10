@@ -1,0 +1,52 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../ArticleCard.astro';
+import EmptyState from '../EmptyState.astro';
+import PageHeader from '../PageHeader.astro';
+import { SECTIONS, type SectionSlug, type Term } from '../../data/taxonomy';
+import { getArticles } from '../../lib/content';
+
+interface Props {
+  section: SectionSlug;
+  category: Term;
+}
+
+const { section: slug, category } = Astro.props;
+const section = SECTIONS[slug];
+const articles = (await getArticles(slug)).filter(
+  (a) => a.data.category === category.slug
+);
+---
+
+<Layout
+  title={`${category.label} — ${section.label}`}
+  description={`${category.description} Articles on ${category.label.toLowerCase()} from the ${section.label} section.`}
+>
+  <PageHeader
+    kicker={section.label}
+    title={category.label}
+    description={category.description}
+    breadcrumbs={[
+      { label: section.label, href: `/${slug}` },
+      { label: category.label },
+    ]}
+  />
+  <div class="container-site mt-12">
+    {
+      articles.length ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {articles.map((a) => (
+            <ArticleCard article={a} headingLevel="h2" />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="book"
+          title={`No ${category.label} articles yet`}
+          description="Articles in this category will appear here once published."
+          action={{ href: `/${slug}`, label: `Back to ${section.label}` }}
+        />
+      )
+    }
+  </div>
+</Layout>

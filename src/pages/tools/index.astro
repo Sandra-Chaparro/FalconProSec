@@ -1,0 +1,52 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Disclaimer from '../../components/Disclaimer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import { getTools } from '../../lib/content';
+
+const tools = await getTools();
+const available = tools.filter((t) => t.data.status === 'available');
+const upcoming = tools.filter((t) => t.data.status !== 'available');
+---
+
+<Layout
+  title="Tools"
+  description="Small interactive tools and exercises for understanding security and privacy risks. Tools in development are clearly marked."
+>
+  <PageHeader
+    kicker="Tools"
+    title="Interactive security & privacy tools"
+    description="Small, practical tools and exercises that make security and privacy concepts concrete. Each one is built to explain, not just to output a result."
+  />
+
+  <div class="container-site mt-12 space-y-16">
+    {
+      available.length > 0 && (
+        <section aria-labelledby="available-heading">
+          <h2 id="available-heading" class="mb-6 text-2xl font-semibold">
+            Available now
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {available.map((tool) => (
+              <ToolCard tool={tool} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section aria-labelledby="upcoming-heading">
+      <h2 id="upcoming-heading" class="text-2xl font-semibold">In development</h2>
+      <p class="mt-2 mb-6 max-w-2xl text-muted">
+        These tools are planned or being built. They are not functional yet and
+        are marked “Coming soon” until they are.
+      </p>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {upcoming.map((tool) => <ToolCard tool={tool} />)}
+      </div>
+    </section>
+
+    <Disclaimer variant="compact" />
+  </div>
+</Layout>

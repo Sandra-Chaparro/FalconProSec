@@ -1,0 +1,55 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  variant?: 'compact' | 'full';
+  /** Heading level when rendered as a page section. */
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { variant = 'full', headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+---
+
+{
+  variant === 'compact' ? (
+    <p class="flex items-start gap-2 text-sm leading-relaxed text-subtle">
+      <Icon name="info" size={16} class="mt-0.5 shrink-0" />
+      <span>
+        Based on publicly available information and independent research. It
+        may contain mistakes —{' '}
+        <a href="/contact?reason=correction" class="link">
+          corrections are welcome
+        </a>
+        .
+      </span>
+    </p>
+  ) : (
+    <aside
+      class="rounded-xl border border-line bg-surface p-6 sm:p-8"
+      aria-labelledby="disclaimer-heading"
+    >
+      <div class="flex items-start gap-4">
+        <Icon name="info" size={22} class="mt-0.5 shrink-0 text-primary-text" />
+        <div>
+          <Heading
+            id="disclaimer-heading"
+            class="text-base font-semibold text-white"
+          >
+            A note on accuracy
+          </Heading>
+          <p class="mt-2 text-sm leading-relaxed text-muted">
+            Investigations and articles here are based on publicly available
+            information and independent research. They are written carefully,
+            but they can contain mistakes or miss context. If you spot an error
+            or have additional information, please{' '}
+            <a href="/contact?reason=correction" class="link">
+              get in touch
+            </a>{' '}
+            — corrections are published openly on the page they affect.
+          </p>
+        </div>
+      </div>
+    </aside>
+  )
+}

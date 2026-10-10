@@ -1,0 +1,134 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { Image } from 'astro:assets';
+import Layout from './Layout.astro';
+import ArticleMeta from '../components/ArticleMeta.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CorrectionsLog from '../components/CorrectionsLog.astro';
+import Disclaimer from '../components/Disclaimer.astro';
+import InvestigationCard from '../components/InvestigationCard.astro';
+import InvestigationQuestion from '../components/InvestigationQuestion.astro';
+import SourcesList from '../components/SourcesList.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import TagList from '../components/TagList.astro';
+import { SITE } from '../config/site';
+import { getTopic } from '../data/taxonomy';
+import { readingTime, type Investigation } from '../lib/content';
+import { articleJsonLd } from '../lib/seo';
+
+interface Props {
+  entry: Investigation;
+  headings: MarkdownHeading[];
+  related: Investigation[];
+}
+
+const { entry, headings, related } = Astro.props;
+const { data } = entry;
+const topic = getTopic(data.topic);
+---
+
+<Layout
+  title={data.title}
+  description={data.description}
+  type="article"
+  publishedTime={data.pubDate}
+  modifiedTime={data.updatedDate}
+  image={data.heroImage?.src}
+  imageAlt={data.heroAlt}
+  noindex={data.draft}
+  jsonLd={articleJsonLd({
+    title: data.title,
+    description: data.description,
+    pubDate: data.pubDate,
+    updatedDate: data.updatedDate,
+    url: new URL(Astro.url.pathname, Astro.site ?? SITE.url).href,
+    image: data.heroImage?.src,
+    keywords: [topic?.label ?? data.topic, ...data.tags],
+  })}
+>
+  <article>
+    <header class="relative overflow-hidden border-b border-line">
+      <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+      <div class="container-site relative py-12 sm:py-16">
+        <Breadcrumbs
+          items={[
+            { label: 'Investigations', href: '/investigations' },
+            { label: data.title },
+          ]}
+        />
+        <ArticleMeta
+          label={`Investigation · ${topic?.label ?? data.topic}`}
+          labelHref={`/investigations/topic/${data.topic}`}
+          pubDate={data.pubDate}
+          updatedDate={data.updatedDate}
+          readingTime={readingTime(entry.body)}
+          draft={data.draft}
+        />
+        <h1 class="mt-5 max-w-4xl text-4xl leading-tight font-semibold sm:text-5xl">
+          {data.title}
+        </h1>
+        <p class="mt-5 max-w-3xl text-lg leading-relaxed text-muted">
+          {data.description}
+        </p>
+        <div class="mt-8 max-w-3xl">
+          <InvestigationQuestion question={data.question} />
+        </div>
+      </div>
+    </header>
+
+    {
+      data.heroImage && (
+        <div class="container-site mt-10">
+          <figure>
+            <Image
+              src={data.heroImage}
+              alt={data.heroAlt ?? ''}
+              class="w-full rounded-xl border border-line"
+              widths={[640, 1024, 1400]}
+              sizes="(min-width: 1152px) 1100px, 100vw"
+              loading="eager"
+            />
+          </figure>
+        </div>
+      )
+    }
+
+    <div class="container-site mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_240px]">
+      <div class="min-w-0">
+        <div class="prose prose-invert prose-lg prose-site prose-investigation max-w-none">
+          <slot />
+        </div>
+
+        <div class="mt-14 space-y-10">
+          <CorrectionsLog corrections={data.corrections} />
+          <SourcesList sources={data.sources} />
+          <TagList tags={data.tags} />
+          <Disclaimer headingLevel="h2" />
+        </div>
+      </div>
+      <aside class="hidden lg:block">
+        <div class="sticky top-24 space-y-8">
+          <TableOfContents headings={headings} numbered />
+          <a href="/contact?reason=correction" class="link block text-sm">
+            Suggest a correction
+          </a>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="container-site mt-20" aria-labelledby="related-heading">
+        <h2 id="related-heading" class="mb-6 text-2xl font-semibold">
+          Related investigations
+        </h2>
+        <div class="grid gap-6 md:grid-cols-3">
+          {related.map((item) => (
+            <InvestigationCard item={item} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Layout>

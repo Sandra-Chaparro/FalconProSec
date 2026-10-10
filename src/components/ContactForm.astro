@@ -1,0 +1,207 @@
+---
+import Icon from './Icon.astro';
+import { CONTACT, SITE } from '../config/site';
+
+const connected = CONTACT.accessKey.length > 0;
+const redirect = new URL('/contact/thanks', Astro.site ?? SITE.url).href;
+const inputClass =
+  'mt-2 w-full rounded-lg border border-line-strong bg-ink px-4 py-3 text-fg placeholder:text-subtle focus:border-primary-text focus:outline-none disabled:opacity-60';
+---
+
+<form
+  id="contact-form"
+  action={CONTACT.endpoint}
+  method="POST"
+  class="card space-y-6 p-6 sm:p-8"
+  novalidate
+>
+  {
+    !connected && (
+      <div
+        class="flex gap-3 rounded-lg border border-amber/40 bg-amber/10 p-4 text-sm text-amber"
+        role="note"
+      >
+        <Icon name="alert" size={18} class="mt-0.5 shrink-0" />
+        <p>
+          The contact form is not connected yet, so messages cannot be sent at
+          the moment. Please check back soon.
+        </p>
+      </div>
+    )
+  }
+
+  <input type="hidden" name="access_key" value={CONTACT.accessKey} />
+  <input type="hidden" name="subject" value={`${SITE.name} contact`} id="contact-subject" />
+  <input type="hidden" name="from_name" value={`${SITE.name} website`} />
+  <input type="hidden" name="redirect" value={redirect} />
+  <!-- Honeypot: real visitors never see or fill this field. -->
+  <input
+    type="checkbox"
+    name="botcheck"
+    class="hidden"
+    style="display: none"
+    tabindex="-1"
+    autocomplete="off"
+    aria-hidden="true"
+  />
+
+  <fieldset class="space-y-6" disabled={!connected}>
+    <legend class="sr-only">Send a message</legend>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <label for="contact-name" class="text-sm font-medium text-fg">
+          Name <span class="font-normal text-subtle">(optional)</span>
+        </label>
+        <input
+          id="contact-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          maxlength="120"
+          class={inputClass}
+        />
+      </div>
+      <div>
+        <label for="contact-email" class="text-sm font-medium text-fg">
+          Email <span class="font-normal text-subtle">(for replies)</span>
+        </label>
+        <input
+          id="contact-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          aria-describedby="contact-email-error"
+          class={inputClass}
+        />
+        <p id="contact-email-error" class="mt-1.5 hidden text-sm text-amber">
+          Please enter a valid email address.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <label for="contact-reason" class="text-sm font-medium text-fg">
+        Reason for contacting
+      </label>
+      <select id="contact-reason" name="reason" class={inputClass}>
+        {
+          CONTACT.reasons.map((r) => (
+            <option value={r.value}>{r.label}</option>
+          ))
+        }
+      </select>
+    </div>
+
+    <div>
+      <label for="contact-message" class="text-sm font-medium text-fg">
+        Message
+      </label>
+      <textarea
+        id="contact-message"
+        name="message"
+        rows="7"
+        required
+        minlength="10"
+        maxlength="5000"
+        aria-describedby="contact-message-hint contact-message-error"
+        class={inputClass}></textarea>
+      <p id="contact-message-hint" class="mt-1.5 text-sm text-subtle">
+        For corrections, please include the page and what should change. Links
+        to sources help.
+      </p>
+      <p id="contact-message-error" class="mt-1.5 hidden text-sm text-amber">
+        Please write a message (at least 10 characters).
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+      <button type="submit" class="btn-primary disabled:cursor-not-allowed disabled:opacity-60">
+        <span data-label>Send message</span>
+        <Icon name="arrow-right" size={16} />
+      </button>
+      <p id="contact-status" class="text-sm" role="status" aria-live="polite"></p>
+    </div>
+  </fieldset>
+
+  <p class="border-t border-line pt-5 text-xs leading-relaxed text-subtle">
+    Your message is delivered by email through
+    <a href="https://web3forms.com/privacy" class="link" rel="noopener noreferrer"
+      >Web3Forms</a
+    >. Your name and email are used only to reply to you. They are not added to
+    any mailing list or shared with anyone else. Please do not send passwords or
+    other sensitive personal information.
+  </p>
+</form>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const reason = document.getElementById('contact-reason') as HTMLSelectElement | null;
+  const subject = document.getElementById('contact-subject') as HTMLInputElement | null;
+  const status = document.getElementById('contact-status');
+
+  // Preselect the reason from ?reason=… links (e.g. "Suggest a correction").
+  const requested = new URLSearchParams(location.search).get('reason');
+  if (reason && requested && [...reason.options].some((o) => o.value === requested)) {
+    reason.value = requested;
+  }
+
+  const fields: [string, string][] = [
+    ['contact-email', 'contact-email-error'],
+    ['contact-message', 'contact-message-error'],
+  ];
+
+  function validate(): boolean {
+    let firstInvalid: HTMLElement | null = null;
+    for (const [id, errorId] of fields) {
+      const input = document.getElementById(id) as HTMLInputElement;
+      const error = document.getElementById(errorId);
+      const valid = input.checkValidity();
+      input.setAttribute('aria-invalid', String(!valid));
+      error?.classList.toggle('hidden', valid);
+      if (!valid && !firstInvalid) firstInvalid = input;
+    }
+    firstInvalid?.focus();
+    return !firstInvalid;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate() || !status) return;
+
+    const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const label = button.querySelector('[data-label]');
+    if (subject && reason) {
+      subject.value = `FalconProSec contact: ${reason.selectedOptions[0]?.text ?? 'General'}`;
+    }
+
+    const data = Object.fromEntries(new FormData(form));
+    delete (data as Record<string, unknown>).redirect;
+
+    button.disabled = true;
+    if (label) label.textContent = 'Sending…';
+    status.className = 'text-sm text-muted';
+    status.textContent = '';
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.success === false) throw new Error(json.message);
+      form.reset();
+      status.className = 'text-sm text-primary-text';
+      status.textContent = 'Thank you — your message has been sent.';
+    } catch {
+      status.className = 'text-sm text-amber';
+      status.textContent =
+        'Sorry, the message could not be sent. Please try again in a moment.';
+    } finally {
+      button.disabled = false;
+      if (label) label.textContent = 'Send message';
+    }
+  });
+</script>

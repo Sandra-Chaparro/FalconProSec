@@ -1,0 +1,192 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CTASection from '../components/CTASection.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SITE } from '../config/site';
+
+const method = [
+  {
+    step: 'Ask a question',
+    text: 'Start from a specific, answerable question rather than a broad topic.',
+  },
+  {
+    step: 'Investigate it',
+    text: 'Research using publicly available information and documented sources.',
+  },
+  {
+    step: 'Explain the evidence',
+    text: 'Show what was found and where it came from, so readers can check it.',
+  },
+  {
+    step: 'Identify what it means',
+    text: 'Separate what the evidence supports from what remains uncertain.',
+  },
+  {
+    step: 'Explain the implications',
+    text: 'Describe the security and privacy consequences in practical terms.',
+  },
+];
+
+const principles = [
+  {
+    title: 'Evidence over assumptions',
+    text: 'Claims are tied to sources. Where something is uncertain, it is described as uncertain.',
+  },
+  {
+    title: 'Clear, not simplified',
+    text: 'Complicated topics are explained in plain language without removing the parts that matter.',
+  },
+  {
+    title: 'Transparent about limits',
+    text: 'Research is based on public information. It can be incomplete or wrong, and corrections are published openly.',
+  },
+  {
+    title: 'Responsible with information',
+    text: 'Investigations focus on how risks work, not on exposing individuals. Personal details are not republished.',
+  },
+];
+---
+
+<Layout
+  title="About"
+  description="Why FalconProSec exists, what it covers, and the approach behind its investigations into cybersecurity, privacy and technology."
+>
+  <PageHeader
+    kicker="About"
+    title="A place for investigating how technology creates risk"
+    description={`${SITE.name} explores the intersection of cybersecurity, privacy, technology and artificial intelligence, and tries to make complicated security topics easier to understand.`}
+  />
+
+  <div class="container-site mt-16 space-y-20">
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="why">
+      <h2 id="why" class="text-2xl font-semibold sm:text-3xl">
+        Why this site exists
+      </h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          Every app, account and connected device produces information. Much of
+          it ends up somewhere public, collected, or easier to find than people
+          expect. That information can then be used in ways nobody intended:
+          to build a profile, to make a scam more convincing, or to find a way
+          in.
+        </p>
+        <p>
+          Most explanations of these risks are either highly technical or
+          vague. {SITE.name} aims for the space in between: careful,
+          evidence-based explanations of how the risks actually work, written
+          for curious readers whether or not they work in security.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="focus">
+      <h2 id="focus" class="text-2xl font-semibold sm:text-3xl">What it covers</h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          The focus is on cybersecurity, privacy, OSINT and public information,
+          social engineering, data exposure, and the ways artificial
+          intelligence is changing all of them.
+        </p>
+        <ul class="space-y-2 text-base">
+          <li>
+            <a href="/investigations" class="link">Investigations</a> examine
+            specific real-world questions in depth.
+          </li>
+          <li>
+            <a href="/security-privacy" class="link">Security & Privacy</a>
+            answers practical questions readers actually have.
+          </li>
+          <li>
+            <a href="/technology" class="link">Technology</a> looks at how
+            technology works and where it is going.
+          </li>
+          <li>
+            <a href="/tools" class="link">Tools</a> are small interactive
+            exercises for learning by doing.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="method">
+      <p class="kicker !text-primary-text">The approach</p>
+      <h2 id="method" class="mt-3 text-2xl font-semibold sm:text-3xl">
+        How investigations work
+      </h2>
+      <ol class="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+        {
+          method.map((m, i) => (
+            <li class="bg-ink p-6">
+              <span class="font-mono text-sm text-primary-text">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p class="mt-3 font-heading font-semibold text-white">{m.step}</p>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{m.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section aria-labelledby="principles">
+      <h2 id="principles" class="text-2xl font-semibold sm:text-3xl">
+        Principles
+      </h2>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        {
+          principles.map((p) => (
+            <div class="card p-6">
+              <h3 class="font-semibold">{p.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="who">
+      <h2 id="who" class="text-2xl font-semibold sm:text-3xl">
+        Who is behind it
+      </h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <!-- TODO: Personalise this introduction. Keep it factual: no credentials or experience that do not exist. -->
+        <p>
+          [Your name] started {SITE.name} out of a long-standing curiosity
+          about how technology works, and how it fails. [One or two sentences
+          about your background and what draws you to these questions.]
+        </p>
+        <p>
+          This is an independent site. It is not a security company and does
+          not offer professional services. The work here is research and
+          explanation, done carefully and openly, with sources listed so you
+          can check them yourself.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="corrections">
+      <h2 id="corrections" class="text-2xl font-semibold sm:text-3xl">
+        Corrections
+      </h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          Mistakes happen. When an error is found in an investigation or
+          article, it is corrected on the page and noted in a visible
+          “Corrections & updates” section with the date, rather than silently
+          changed.
+        </p>
+        <p>
+          If you notice something wrong or have more context,
+          <a href="/contact?reason=correction" class="link">please get in touch</a>.
+        </p>
+      </div>
+    </section>
+
+    <CTASection
+      title="Start with a question"
+      description="Read the latest investigations, or suggest a question you think deserves a closer look."
+      primary={{ href: '/investigations', label: 'Explore Investigations' }}
+      secondary={{ href: '/contact?reason=investigation', label: 'Suggest an investigation' }}
+    />
+  </div>
+</Layout>

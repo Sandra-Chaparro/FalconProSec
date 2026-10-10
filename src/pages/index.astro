@@ -1,113 +1,209 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Header from "../components/Header.astro";
-import Hero from "../components/Hero.astro";
-import Footer from "../components/Footer.astro";
-import Sidebar from "../components/Sidebar.astro";
-import ArticleCard from "../components/ArticleCard.astro";
-import { getCollection } from "astro:content";
+import Layout from '../layouts/Layout.astro';
+import Badge from '../components/Badge.astro';
+import CTASection from '../components/CTASection.astro';
+import Disclaimer from '../components/Disclaimer.astro';
+import EmptyState from '../components/EmptyState.astro';
+import Icon from '../components/Icon.astro';
+import InvestigationCard from '../components/InvestigationCard.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ToolCard from '../components/ToolCard.astro';
+import TopicCard from '../components/TopicCard.astro';
+import { SITE } from '../config/site';
+import { TOPICS } from '../data/taxonomy';
+import { getInvestigations, getTools, pickFeatured } from '../lib/content';
+import { siteJsonLd } from '../lib/seo';
 
-const allPosts = await getCollection("posts");
-const featuredPost = allPosts.find((post) => post.data.featured);
-const regularPosts = allPosts
-	.filter((post) => !post.data.featured)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const investigations = await getInvestigations();
+const featured = pickFeatured(investigations);
+const latest = investigations.filter((i) => i !== featured).slice(0, 6);
 
-const formatDate = (date: Date) => {
-	return date.toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-};
+const tools = await getTools();
+const featuredTool =
+  tools.find((t) => t.data.status === 'available' && t.data.featured) ??
+  tools.find((t) => t.data.status === 'available') ??
+  tools.find((t) => t.data.featured);
 ---
 
-<Layout title="Article Archive | DevBlog">
-	<Header />
-	<Hero />
+<Layout description={SITE.description} jsonLd={siteJsonLd()}>
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true">
+    </div>
+    <div class="container-site relative py-20 sm:py-28 lg:py-32">
+      <p class="kicker !text-primary-text">
+        Cybersecurity · Privacy · Technology · AI
+      </p>
+      <h1
+        class="mt-6 max-w-4xl text-5xl leading-[1.05] font-semibold sm:text-6xl lg:text-7xl"
+      >
+        Understanding the risks behind technology.
+      </h1>
+      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">
+        FalconProSec investigates how technology creates security and privacy
+        risks: how information is exposed, collected and misused, and what
+        artificial intelligence changes. Each piece starts with a question and
+        follows the evidence.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href="/investigations" class="btn-primary">
+          Explore Investigations <Icon name="arrow-right" size={16} />
+        </a>
+        <a href="/tools" class="btn-secondary">Explore Tools</a>
+      </div>
+    </div>
+  </section>
 
-	<main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-		<div class="flex flex-col lg:flex-row gap-12">
-			<!-- Main Content -->
-			<div class="lg:w-2/3">
-				<div class="flex items-center justify-between mb-8">
-					<h2
-						class="text-2xl font-bold text-slate-900 dark:text-white border-l-4 border-primary pl-3"
-					>
-						Featured Articles
-					</h2>
-					<a
-						class="text-sm text-primary hover:text-cyan-300 font-medium flex items-center"
-						href="/archive"
-					>
-						View All <svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="ml-1"
-						>
-							<path d="M5 12h14"></path>
-							<path d="m12 5 7 7-7 7"></path>
-						</svg>
-					</a>
-				</div>
+  <!-- Featured investigation -->
+  <section class="container-site mt-20" aria-labelledby="featured-heading">
+    <SectionHeader
+      id="featured-heading"
+      kicker="Featured investigation"
+      title="Asking a question, then following the evidence"
+      link={{ href: '/investigations', label: 'All investigations' }}
+    />
+    {
+      featured ? (
+        <InvestigationCard item={featured} variant="lead" />
+      ) : (
+        <article class="card relative grid overflow-hidden border-dashed md:grid-cols-[1.1fr_1fr]">
+          <div class="flex flex-col gap-6 p-6 sm:p-10">
+            <div class="flex items-center gap-3">
+              <Badge tone="amber">Coming soon</Badge>
+              <span class="kicker">Investigation</span>
+            </div>
+            <h3 class="text-2xl font-semibold text-muted sm:text-3xl">
+              [Investigation title]
+            </h3>
+            <p class="leading-relaxed text-subtle">
+              [Short description] The first investigation is being researched.
+              It will appear here once it is ready to be published.
+            </p>
+            <p class="text-sm font-medium text-subtle">
+              Read Investigation <span aria-hidden="true">→</span>
+            </p>
+          </div>
+          <div
+            class="relative min-h-48 border-t border-line bg-surface-2 md:border-t-0 md:border-l"
+          >
+            <div class="hero-grid absolute inset-0" aria-hidden="true"></div>
+          </div>
+        </article>
+      )
+    }
+  </section>
 
-				<!-- Featured Post -->
-				{
-					featuredPost && (
-						<ArticleCard
-							featured={true}
-							title={featuredPost.data.title}
-							description={featuredPost.data.description}
-							image={featuredPost.data.image}
-							category={featuredPost.data.category}
-							author={featuredPost.data.author}
-							authorImage={featuredPost.data.authorImage}
-							date={formatDate(featuredPost.data.pubDate)}
-							readTime={featuredPost.data.readTime}
-							slug={featuredPost.id}
-						/>
-					)
-				}
+  <!-- Topics -->
+  <section class="container-site mt-24" aria-labelledby="topics-heading">
+    <SectionHeader
+      id="topics-heading"
+      kicker="Topics"
+      title="What this site explores"
+      description="The areas where technology, information and people meet, and where risk tends to appear."
+    />
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        TOPICS.map((topic) => (
+          <TopicCard term={topic} href={`/topics/${topic.slug}`} />
+        ))
+      }
+    </div>
+  </section>
 
-				<!-- Regular Posts Grid -->
-				<div class="grid md:grid-cols-2 gap-6">
-					{
-						regularPosts.map((post) => (
-							<ArticleCard
-								title={post.data.title}
-								description={post.data.description}
-								image={post.data.image}
-								category={post.data.category}
-								author={post.data.author}
-								date={formatDate(post.data.pubDate)}
-								readTime={post.data.readTime}
-								slug={post.id}
-							/>
-						))
-					}
-				</div>
+  <!-- Featured tool -->
+  <section class="container-site mt-24" aria-labelledby="tool-heading">
+    <div
+      class="grid gap-8 rounded-2xl border border-line bg-surface/50 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center"
+    >
+      <div>
+        <p class="kicker !text-primary-text">Featured tool</p>
+        <h2 id="tool-heading" class="mt-3 text-2xl font-semibold sm:text-3xl">
+          Learn by doing, not just reading
+        </h2>
+        <p class="mt-3 leading-relaxed text-muted">
+          Small interactive tools and exercises that make security and privacy
+          concepts concrete. They are being built one at a time and are marked
+          clearly until they work.
+        </p>
+        <a href="/tools" class="link mt-5 inline-block text-sm">
+          See all tools
+        </a>
+      </div>
+      {featuredTool && <ToolCard tool={featuredTool} />}
+    </div>
+  </section>
 
-				<div class="mt-12 text-center">
-					<a
-						href="/archive"
-						class="inline-block px-6 py-2 rounded-full border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-all text-sm font-medium"
-					>
-						View All Articles
-					</a>
-				</div>
-			</div>
+  <!-- Latest investigations -->
+  <section class="container-site mt-24" aria-labelledby="latest-heading">
+    <SectionHeader
+      id="latest-heading"
+      kicker="Latest"
+      title="Latest investigations"
+      link={latest.length
+        ? { href: '/investigations', label: 'View all' }
+        : undefined}
+    />
+    {
+      latest.length ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {latest.map((item) => (
+            <InvestigationCard item={item} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="search"
+          title="Investigations are in progress"
+          description="New investigations will be listed here as they are published. Have a question you think is worth investigating?"
+          action={{
+            href: '/contact?reason=investigation',
+            label: 'Suggest an investigation',
+          }}
+        />
+      )
+    }
+  </section>
 
-			<!-- Sidebar -->
-			<Sidebar />
-		</div>
-	</main>
+  <!-- About the site -->
+  <section class="container-site mt-24" aria-labelledby="about-heading">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr]">
+      <div>
+        <p class="kicker !text-primary-text">About the site</p>
+        <h2 id="about-heading" class="mt-3 text-2xl font-semibold sm:text-3xl">
+          Why FalconProSec exists
+        </h2>
+      </div>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          Technology makes it easy to share, store and connect information, and
+          just as easy to expose it. Most of the risk is not in exotic attacks
+          but in ordinary things: what is public, what is collected, and how
+          people can be persuaded.
+        </p>
+        <p>
+          This site asks specific questions about those risks, researches them
+          using public information, and explains what the evidence shows and
+          what it means for security and privacy. Expect clear explanations,
+          listed sources, and open corrections.
+        </p>
+        <a href="/about" class="link inline-block text-base">
+          More about the approach
+        </a>
+      </div>
+    </div>
+  </section>
 
-	<Footer />
+  <!-- Method + disclaimer -->
+  <section class="container-site mt-24 space-y-8">
+    <CTASection
+      title="Have a question worth investigating?"
+      description="Suggestions, corrections and additional context are always welcome."
+      primary={{
+        href: '/contact?reason=investigation',
+        label: 'Suggest an investigation',
+      }}
+      secondary={{ href: '/about', label: 'How investigations work' }}
+    />
+    <Disclaimer />
+  </section>
 </Layout>

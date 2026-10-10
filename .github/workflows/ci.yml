@@ -31,20 +31,14 @@ jobs:
       - name: Sync Astro types
         run: npx astro sync
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-
       - name: Type check
         run: npm run type-check
 
       - name: Build
         run: npm run build
-        env:
-          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL || 'https://mock.supabase.co' }}
-          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY || 'mock-key' }}
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
 
       - name: Run tests
         run: npm test
-        env:
-          PUBLIC_SUPABASE_URL: 'https://mock.supabase.co'
-          PUBLIC_SUPABASE_ANON_KEY: 'mock-key'

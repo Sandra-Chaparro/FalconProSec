@@ -1,0 +1,86 @@
+---
+import Layout from './Layout.astro';
+import Badge from '../components/Badge.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Disclaimer from '../components/Disclaimer.astro';
+import Icon, { type IconName } from '../components/Icon.astro';
+import type { Tool } from '../lib/content';
+
+interface Props {
+  tool: Tool;
+}
+
+const { tool } = Astro.props;
+const { data } = tool;
+const available = data.status === 'available';
+---
+
+<Layout
+  title={data.title}
+  description={data.summary}
+  noindex={!available}
+>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="container-site relative py-12 sm:py-16">
+      <Breadcrumbs items={[{ label: 'Tools', href: '/tools' }, { label: data.title }]} />
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="kicker">{data.category}</span>
+        {
+          available ? (
+            <Badge tone="blue">Available</Badge>
+          ) : (
+            <Badge tone="amber">Coming soon</Badge>
+          )
+        }
+      </div>
+      <h1 class="mt-4 max-w-3xl text-4xl font-semibold sm:text-5xl">
+        {data.title}
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
+        {data.summary}
+      </p>
+    </div>
+  </section>
+
+  <div class="container-site mt-12">
+    {
+      available ? (
+        <slot />
+      ) : (
+        <div class="card flex flex-col gap-6 border-dashed p-8 sm:flex-row sm:items-start">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-line bg-ink text-amber">
+            <Icon name={data.icon as IconName} size={24} />
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold">This tool is in development</h2>
+            <p class="mt-2 max-w-2xl leading-relaxed text-muted">
+              It isn’t functional yet. This page describes what it is intended
+              to do. If you have ideas for what would make it genuinely useful,
+              suggestions are welcome.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href="/tools" class="btn-secondary">
+                <Icon name="arrow-left" size={16} /> All tools
+              </a>
+              <a href="/contact?reason=feedback" class="btn-secondary">
+                Suggest a feature
+              </a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    <div class="mt-12 max-w-3xl">
+      <p class="text-sm leading-relaxed text-subtle">
+        Tools on this site are educational. They are meant to build awareness
+        and understanding, not to replace a professional security assessment.
+        Each tool explains how it handles anything you enter.
+      </p>
+    </div>
+    <div class="mt-8 max-w-3xl">
+      <Disclaimer variant="compact" />
+    </div>
+  </div>
+</Layout>

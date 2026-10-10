@@ -1,0 +1,25 @@
+---
+import { render } from 'astro:content';
+import InvestigationLayout from '../../layouts/InvestigationLayout.astro';
+import { getInvestigations } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const all = await getInvestigations();
+  return all.map((entry) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      related: all
+        .filter((i) => i.id !== entry.id && i.data.topic === entry.data.topic)
+        .slice(0, 3),
+    },
+  }));
+}
+
+const { entry, related } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<InvestigationLayout entry={entry} headings={headings} related={related}>
+  <Content />
+</InvestigationLayout>

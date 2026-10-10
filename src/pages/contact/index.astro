@@ -1,0 +1,71 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import Icon, { type IconName } from '../../components/Icon.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+const reasons: { icon: IconName; title: string; text: string }[] = [
+  {
+    icon: 'help',
+    title: 'General questions',
+    text: 'About the site, an investigation, or a topic covered here.',
+  },
+  {
+    icon: 'edit',
+    title: 'Corrections',
+    text: 'Spotted an error or have additional context? Corrections are published openly.',
+  },
+  {
+    icon: 'search',
+    title: 'Investigation suggestions',
+    text: 'A question about technology, security or privacy you think deserves a closer look.',
+  },
+  {
+    icon: 'message',
+    title: 'Feedback & collaboration',
+    text: 'Thoughts on the site or tools, or an idea for working on something together.',
+  },
+];
+---
+
+<Layout
+  title="Contact"
+  description="Get in touch with FalconProSec with questions, corrections, investigation suggestions, feedback or collaboration ideas."
+>
+  <PageHeader
+    kicker="Contact"
+    title="Get in touch"
+    description="Questions, corrections, suggestions and feedback are all welcome. Every message is read."
+  />
+  <div class="container-site mt-12 grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+    <section aria-labelledby="reasons-heading">
+      <h2 id="reasons-heading" class="text-xl font-semibold">
+        Reasons to write
+      </h2>
+      <ul class="mt-6 space-y-6">
+        {
+          reasons.map((r) => (
+            <li class="flex gap-4">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-line bg-surface text-primary-text">
+                <Icon name={r.icon} />
+              </span>
+              <div>
+                <h3 class="font-semibold">{r.title}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-muted">{r.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-8 text-sm leading-relaxed text-subtle">
+        This is an independent research and awareness site. It does not offer
+        security services, incident response or legal advice. If you are
+        dealing with an active security incident, contact your organisation’s
+        IT or security team, or your local authorities.
+      </p>
+    </section>
+    <section aria-label="Contact form">
+      <ContactForm />
+    </section>
+  </div>
+</Layout>

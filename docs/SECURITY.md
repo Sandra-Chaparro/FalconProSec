@@ -1,47 +1,20 @@
-# Política de Seguridad
+# Security policy
 
-## Versiones Soportadas
+FalconProSec is a static website with no user accounts and no database.
 
-| Versión | Soportada          |
-| ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
+## Reporting a vulnerability
 
-## Reportar una Vulnerabilidad
+If you find a security issue with the website itself (for example, a
+misconfiguration or a vulnerable dependency), please report it privately via
+the contact form rather than opening a public issue:
 
-Si descubres una vulnerabilidad de seguridad en este proyecto, por favor repórtala de forma privada antes de hacerla pública.
+https://falconprosec.com/contact?reason=general
 
-### Cómo Reportar
+Please include:
 
-1. Envía un email a: security@[tu-dominio].com
-2. Incluye "Reporte de Vulnerabilidad" en el asunto
-3. Proporciona información detallada sobre la vulnerabilidad
-4. Incluye pasos para reproducir si es posible
+- a description of the issue and where it occurs
+- steps to reproduce, if possible
+- any relevant references
 
-### Tiempo de Respuesta
-
-- Respuesta inicial en 48 horas
-- Análisis detallado en 7 días
-- Timeline de corrección depende de la severidad
-
-## Mejores Prácticas de Seguridad
-
-### Configuración de Supabase
-
-- Nunca exponer service role keys en código cliente
-- Usar políticas de Row Level Security (RLS)
-- Validar todas las entradas de usuario
-- Implementar flujos de autenticación adecuados
-
-### Variables de Entorno
-
-- Mantener datos sensibles en archivos `.env`
-- Nunca commitear archivos `.env` al control de versiones
-- Usar claves diferentes para desarrollo y producción
-
-## Dependencias
-
-Este proyecto utiliza:
-
-- npm audit para escaneo de vulnerabilidades
-- Actualizaciones regulares de dependencias
-- Patches de seguridad aplicados prontamente
+Please do not include sensitive personal data in your report. Reports will be
+acknowledged and addressed as quickly as possible.

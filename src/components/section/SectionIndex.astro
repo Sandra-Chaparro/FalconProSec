@@ -1,0 +1,60 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../ArticleCard.astro';
+import EmptyState from '../EmptyState.astro';
+import PageHeader from '../PageHeader.astro';
+import SectionHeader from '../SectionHeader.astro';
+import TopicCard from '../TopicCard.astro';
+import { SECTIONS, type SectionSlug } from '../../data/taxonomy';
+import { getArticles } from '../../lib/content';
+
+interface Props {
+  section: SectionSlug;
+  description: string;
+}
+
+const { section: slug, description } = Astro.props;
+const section = SECTIONS[slug];
+const articles = await getArticles(slug);
+const countFor = (category: string) =>
+  articles.filter((a) => a.data.category === category).length;
+---
+
+<Layout title={section.label} description={description}>
+  <PageHeader kicker={section.label} title={section.label} description={section.intro} />
+
+  <section class="container-site mt-12" aria-labelledby="categories-heading">
+    <h2 id="categories-heading" class="sr-only">Categories</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        section.categories.map((c) => (
+          <TopicCard
+            term={c}
+            href={`/${slug}/category/${c.slug}`}
+            count={countFor(c.slug)}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-site mt-20" aria-labelledby="latest-heading">
+    <SectionHeader id="latest-heading" kicker="Latest" title={`Latest in ${section.label}`} />
+    {
+      articles.length ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {articles.map((a) => (
+            <ArticleCard article={a} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          icon="book"
+          title="Articles are on the way"
+          description="Explainers in this section will be listed here as they are published. Is there a question you would like answered?"
+          action={{ href: '/contact?reason=general', label: 'Ask a question' }}
+        />
+      )
+    }
+  </section>
+</Layout>

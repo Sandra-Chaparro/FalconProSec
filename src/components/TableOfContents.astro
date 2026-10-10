@@ -1,0 +1,38 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  numbered?: boolean;
+}
+
+const { headings, numbered = false } = Astro.props;
+const items = headings.filter((h) => h.depth === 2);
+---
+
+{
+  items.length > 0 && (
+    <nav aria-labelledby="toc-heading">
+      <p id="toc-heading" class="kicker">
+        On this page
+      </p>
+      <ol class="mt-4 space-y-2.5 border-l border-line">
+        {items.map((h, i) => (
+          <li>
+            <a
+              href={`#${h.slug}`}
+              class="-ml-px flex gap-2 border-l border-transparent pl-4 text-sm text-muted hover:border-primary hover:text-white"
+            >
+              {numbered && (
+                <span class="font-mono text-xs text-subtle">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+              )}
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
