@@ -4,13 +4,19 @@
  * characters, with a scanner box that wanders over it (and follows the
  * pointer on desktop). Purely decorative; respects prefers-reduced-motion.
  */
+import { getImage } from 'astro:assets';
 import mark from '../assets/falcon-mark.png';
+
+// Use a generated variant rather than mark.src: the original file is not
+// reliably emitted in the deployed build, which left the canvas empty.
+// The art is sampled down to a few hundred cells, so 800px is plenty.
+const source = await getImage({ src: mark, width: 800, format: 'webp' });
 ---
 
 <canvas
   id="ascii-hero"
   class="ascii-canvas pointer-events-none absolute inset-0 h-full w-full opacity-50 lg:opacity-100"
-  data-src={mark.src}
+  data-src={source.src}
   aria-hidden="true"></canvas>
 <div class="hero-scanlines pointer-events-none absolute inset-0" aria-hidden="true">
 </div>
