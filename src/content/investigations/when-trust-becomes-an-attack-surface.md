@@ -6,7 +6,7 @@ pubDate: 2026-11-14
 topic: human-vulnerability
 tags: ['social-engineering', 'insider-risk', 'espionage', 'deception']
 featured: false
-draft: true # set to false when ready to publish
+draft: false
 sources:
   - title: 'Nvidia investigates CEO Jensen Huang amid allegations he was target of Chinese intelligence effort'
     url: 'https://www.cbsnews.com/news/nvidia-jensen-huang-investigation-china-intelligence/'
