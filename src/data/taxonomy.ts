@@ -9,50 +9,54 @@ export interface Term {
   label: string;
   description: string;
   icon: IconName;
+  /** Short, high-stakes phrase cycled in the homepage hero ("investigating: ..."). */
+  signal?: string;
 }
 
+/**
+ * Areas of investigation. These are human problems, not career tracks:
+ * each one draws on whatever discipline the question needs.
+ */
 export const TOPICS = [
   {
-    slug: 'cybersecurity',
-    label: 'Cybersecurity',
+    slug: 'human-vulnerability',
+    signal: "ai scams that already know your name",
+    label: 'Human Vulnerability',
     description:
-      'How systems are attacked and defended, explained without the jargon.',
-    icon: 'shield',
-  },
-  {
-    slug: 'privacy',
-    label: 'Privacy',
-    description:
-      'What happens to personal information, who collects it, and why it matters.',
-    icon: 'eye',
-  },
-  {
-    slug: 'osint',
-    label: 'OSINT',
-    description:
-      'What can be learned from open, publicly available sources, and its limits.',
-    icon: 'search',
-  },
-  {
-    slug: 'social-engineering',
-    label: 'Social Engineering',
-    description:
-      'How people, rather than systems, are manipulated into giving access.',
+      'AI-powered scams, impersonation, social engineering and manipulation, and why some people are more exposed than others.',
     icon: 'users',
   },
   {
-    slug: 'ai-security',
-    label: 'AI & Security',
+    slug: 'trust-identity',
+    signal: "cloned voices begging for money",
+    label: 'Trust & Identity',
     description:
-      'How artificial intelligence changes both the risks and the defences.',
+      'Deepfakes, synthetic identities, authentication and misinformation: how we decide what, and who, to trust.',
+    icon: 'key',
+  },
+  {
+    slug: 'ai-decision-making',
+    signal: "algorithms deciding who gets a chance",
+    label: 'AI & Human Decision-Making',
+    description:
+      'Automated decisions, bias, accountability and explainability, and the people on the receiving end.',
     icon: 'spark',
   },
   {
-    slug: 'data-exposure',
-    label: 'Data Exposure',
+    slug: 'human-connections',
+    signal: "ai companions built to keep you hooked",
+    label: 'Human Connection',
     description:
-      'How information leaks, gets breached, or is published without intent.',
-    icon: 'layers',
+      'AI companionship, emotional dependency and digital wellbeing as technology becomes more personal.',
+    icon: 'message',
+  },
+  {
+    slug: 'human-safety',
+    signal: "the systems your life quietly depends on",
+    label: 'Human Safety',
+    description:
+      'Security risks in the systems people depend on: healthcare, schools, finance and public services.',
+    icon: 'shield',
   },
 ] as const satisfies readonly Term[];
 
@@ -61,7 +65,7 @@ export const SECTIONS = {
     slug: 'security-privacy',
     label: 'Security & Privacy',
     intro:
-      'Practical explanations of everyday security and privacy questions: what the risk actually is, how it works, and what you can reasonably do about it.',
+      'Plain explanations of the security and privacy risks that reach ordinary people: what the risk actually is, how it works, and what you can reasonably do about it.',
     categories: [
       {
         slug: 'personal-privacy',
@@ -111,7 +115,7 @@ export const SECTIONS = {
     slug: 'technology',
     label: 'Technology',
     intro:
-      'Broader looks at how technology works and where it is heading, with attention to the security and privacy questions it raises.',
+      'How technology works, where it is heading, and what that means for the people who use it, or are affected by it without ever choosing to.',
     categories: [
       {
         slug: 'artificial-intelligence',
@@ -179,13 +183,40 @@ export function getCategory(
   return SECTIONS[section].categories.find((c) => c.slug === slug);
 }
 
-/** Example questions the site intends to explore. Not completed work. */
-export const OPEN_QUESTIONS = [
-  'How much information can be discovered about a company using only public sources?',
-  'How do scammers build profiles of potential victims?',
-  'What information can a website unintentionally expose?',
-  'How does AI change social engineering?',
-  'What can someone learn from a publicly exposed email address?',
-  'What actually happens after a data breach?',
-  'How do attackers use publicly available information?',
+/**
+ * Questions planned for investigation, grouped by area. Not completed work.
+ */
+export const OPEN_QUESTIONS: { area: TopicSlug; question: string }[] = [
+  {
+    area: 'human-vulnerability',
+    question: 'How does AI change the economics of a scam when a convincing message costs almost nothing to produce?',
+  },
+  {
+    area: 'human-vulnerability',
+    question: 'How do scammers build profiles of potential victims from public information?',
+  },
+  {
+    area: 'trust-identity',
+    question: 'If a voice can be cloned from a short clip, what should a family or a help desk use to verify who is calling?',
+  },
+  {
+    area: 'trust-identity',
+    question: 'What can an ordinary person realistically check to tell whether an image or video is authentic?',
+  },
+  {
+    area: 'ai-decision-making',
+    question: 'When an automated system makes a decision about someone, what would they need in order to understand or challenge it?',
+  },
+  {
+    area: 'human-connection',
+    question: 'What design choices make an AI companion supportive, and which ones make it manipulative?',
+  },
+  {
+    area: 'access-opportunity',
+    question: 'Which security practices quietly assume a level of access, language or ability that many people do not have?',
+  },
+  {
+    area: 'human-safety',
+    question: 'What actually happens to patients, students or citizens after a data breach at a service they cannot opt out of?',
+  },
 ];

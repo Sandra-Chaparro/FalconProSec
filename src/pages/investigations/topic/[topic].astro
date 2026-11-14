@@ -21,7 +21,7 @@ const items = (await getInvestigations()).filter(
   description={`Investigations about ${topic.label.toLowerCase()}: ${topic.description}`}
 >
   <PageHeader
-    kicker="Investigations by topic"
+    kicker="Area of investigation"
     title={topic.label}
     description={topic.description}
     breadcrumbs={[
@@ -40,7 +40,7 @@ const items = (await getInvestigations()).filter(
       ) : (
         <EmptyState
           title={`No ${topic.label} investigations yet`}
-          description="Investigations on this topic will be listed here once published."
+          description="Investigations in this area will be listed here once published."
           action={{ href: '/investigations', label: 'Back to all investigations' }}
         />
       )

@@ -5,7 +5,7 @@ import EmptyState from '../../components/EmptyState.astro';
 import InvestigationCard from '../../components/InvestigationCard.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
-import { OPEN_QUESTIONS, TOPICS } from '../../data/taxonomy';
+import { OPEN_QUESTIONS, TOPICS, getTopic } from '../../data/taxonomy';
 import { getInvestigations, pickFeatured } from '../../lib/content';
 
 const investigations = await getInvestigations();
@@ -16,19 +16,19 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
 
 <Layout
   title="Investigations"
-  description="Investigations into real-world questions about cybersecurity, privacy, technology and how information can be exposed or misused."
+  description="Open investigations into how technology and AI affect human trust, safety, identity and opportunity: the question, the evidence, the experiment and what was learned."
 >
   <PageHeader
     kicker="Investigations"
-    title="Questions, evidence, and what it means"
-    description="Each investigation starts with a specific question, works through publicly available evidence, and explains the findings and their security and privacy implications."
+    title="Questions, evidence, and what it means for people"
+    description="Open questions, not settled answers. Each investigation starts with a question about how technology affects people, works through the evidence, tests it where possible, and ends with what was learned and why it matters."
   >
     <ol
       class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-wide text-subtle uppercase"
       aria-label="Investigation method"
     >
       {
-        ['Question', 'Evidence', 'Findings', 'Meaning', 'Implications'].map(
+        ['Question', 'Evidence', 'Analysis', 'Experiment', 'Insight'].map(
           (step, i) => (
             <li>
               <span class="text-primary-text">
@@ -62,7 +62,7 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
               class="w-full rounded-lg border border-line bg-surface px-4 py-2.5 text-sm text-fg placeholder:text-subtle focus:border-primary/60 focus:outline-none sm:max-w-xs"
             />
             <fieldset class="flex flex-wrap gap-2">
-              <legend class="sr-only">Filter by topic</legend>
+              <legend class="sr-only">Filter by area</legend>
               <a
                 href="/investigations"
                 data-topic=""
@@ -111,10 +111,10 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
         <EmptyState
           icon="search"
           title="The first investigations are in progress"
-          description="Published investigations will be listed here, with their sources and any corrections. Have a question worth investigating?"
+          description="Published investigations will be listed here, with their sources and any corrections. In the meantime, these are the questions on the list."
           action={{
             href: '/contact?reason=investigation',
-            label: 'Suggest an investigation',
+            label: 'Suggest a question',
           }}
         />
       )
@@ -126,7 +126,7 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
       id="open-questions"
       kicker="On the list"
       title="Questions worth investigating"
-      description="Open questions this site intends to explore. These are not completed investigations."
+      description="Open questions across the areas of investigation. These are not completed investigations, just problems worth understanding before they become impossible to ignore."
     />
     <ul class="grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
       {
@@ -135,7 +135,14 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
             <span class="font-mono text-primary-text" aria-hidden="true">
               ?
             </span>
-            <span class="font-serif text-lg leading-snug">{q}</span>
+            <span>
+              <a href={`/topics/${q.area}`} class="kicker hover:text-primary-text">
+                {getTopic(q.area)?.label}
+              </a>
+              <span class="mt-1 block font-heading text-lg leading-snug">
+                {q.question}
+              </span>
+            </span>
           </li>
         ))
       }

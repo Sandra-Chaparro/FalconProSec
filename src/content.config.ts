@@ -84,6 +84,7 @@ const tools = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
+    question: z.string().optional(),
     category: z.string(),
     status: z.enum(['available', 'coming-soon']),
     icon: z.string().default('wrench'),

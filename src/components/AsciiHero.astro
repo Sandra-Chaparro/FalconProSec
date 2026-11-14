@@ -1,0 +1,269 @@
+---
+/**
+ * Animated hero background: the falcon mark rendered as flickering ASCII
+ * characters, with a scanner box that wanders over it (and follows the
+ * pointer on desktop). Purely decorative; respects prefers-reduced-motion.
+ */
+import mark from '../assets/falcon-mark.png';
+---
+
+<canvas
+  id="ascii-hero"
+  class="ascii-canvas pointer-events-none absolute inset-0 h-full w-full opacity-50 lg:opacity-100"
+  data-src={mark.src}
+  aria-hidden="true"></canvas>
+<div class="hero-scanlines pointer-events-none absolute inset-0" aria-hidden="true">
+</div>
+
+<script>
+  const canvas = document.getElementById('ascii-hero') as HTMLCanvasElement | null;
+  const hero = canvas?.parentElement;
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && hero && ctx) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const CELL_W = 7;
+    const CELL_H = 12;
+    const FONT = '500 10px "JetBrains Mono", ui-monospace, monospace';
+    const DENSE = '#%@&$WM8B0Q';
+    const MID = 'ABCDEFGHJKLMNPRSTUVXYZ0123456789';
+    const LIGHT = '.:-+=*/<>';
+    const STATUSES = [
+      'VERIFYING IDENTITY',
+      'CHECKING SOURCE',
+      'SYNTHETIC? ANALYZING',
+      'TRUST SIGNAL FOUND',
+      'HUMAN · CONFIRMED',
+    ];
+
+    interface Cell {
+      lum: number; // 0..1 brightness of the source pixel
+      blue: boolean; // part of the blue shield
+      ch: string;
+    }
+
+    let cols = 0;
+    let rows = 0;
+    let cells: (Cell | null)[] = [];
+    let artX = 0; // art bounds in cells
+    let artY = 0;
+    let artW = 0;
+    let artH = 0;
+    let source: HTMLImageElement | null = null;
+
+    // Scanner box, in cells.
+    const box = { x: 0, y: 0, tx: 0, ty: 0, w: 22, h: 14 };
+    let pointerTarget: { x: number; y: number } | null = null;
+    let statusIndex = 0;
+    let confidence = 0;
+    let lastRetarget = 0;
+
+    const pick = (set: string) => set[Math.floor(Math.random() * set.length)];
+    const charFor = (lum: number) =>
+      lum > 0.6 ? pick(DENSE) : lum > 0.35 ? pick(MID) : pick(LIGHT);
+
+    function build() {
+      if (!canvas || !hero || !ctx || !source) return;
+      const rect = hero.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      cols = Math.ceil(rect.width / CELL_W);
+      rows = Math.ceil(rect.height / CELL_H);
+
+      // Art is square in pixels; size it to ~90% of the hero height and sit it
+      // right of centre on wide screens so the headline stays readable.
+      const wide = rect.width >= 1024;
+      const sizePx = Math.min(rect.height * 0.9, rect.width * (wide ? 0.55 : 0.95));
+      artW = Math.round(sizePx / CELL_W);
+      artH = Math.round(sizePx / CELL_H);
+      artX = Math.round((wide ? cols * 0.64 : cols / 2) - artW / 2);
+      // On narrow screens, sit lower, between the intro and the second line.
+      artY = Math.round(wide ? (rows - artH) / 2 : rows * 0.62 - artH / 2);
+
+      const sample = document.createElement('canvas');
+      sample.width = artW;
+      sample.height = artH;
+      const sctx = sample.getContext('2d', { willReadFrequently: true });
+      if (!sctx) return;
+      sctx.drawImage(source, 0, 0, artW, artH);
+      const px = sctx.getImageData(0, 0, artW, artH).data;
+
+      cells = new Array(cols * rows).fill(null);
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const ax = x - artX;
+          const ay = y - artY;
+          let lum = 0;
+          let blue = false;
+          if (ax >= 0 && ay >= 0 && ax < artW && ay < artH) {
+            const i = (ay * artW + ax) * 4;
+            const [r, g, b] = [px[i], px[i + 1], px[i + 2]];
+            lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            blue = b - (r + g) / 2 > 50;
+            if (blue) lum = Math.max(lum, 0.45);
+          }
+          if (lum > 0.16) {
+            cells[y * cols + x] = { lum, blue, ch: charFor(lum) };
+          } else if (Math.random() < 0.025) {
+            // Sparse noise around the image, like stray data.
+            cells[y * cols + x] = { lum: 0.08, blue: false, ch: pick(MID) };
+          }
+        }
+      }
+
+      box.w = Math.max(14, Math.round(artW * 0.28));
+      box.h = Math.max(8, Math.round((box.w * CELL_W) / CELL_H));
+      retarget();
+      box.x = box.tx;
+      box.y = box.ty;
+    }
+
+    // Move the scanner to a random bright spot on the art.
+    function retarget() {
+      for (let tries = 0; tries < 40; tries++) {
+        const x = artX + Math.floor(Math.random() * Math.max(1, artW - box.w));
+        const y = artY + Math.floor(Math.random() * Math.max(1, artH - box.h));
+        const c = cells[(y + Math.floor(box.h / 2)) * cols + x + Math.floor(box.w / 2)];
+        if (c && c.lum > 0.4) {
+          box.tx = x;
+          box.ty = y;
+          break;
+        }
+      }
+      statusIndex = (statusIndex + 1) % STATUSES.length;
+      confidence = 0;
+    }
+
+    function draw(now: number) {
+      if (!canvas || !ctx) return;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.font = FONT;
+      ctx.textBaseline = 'top';
+
+      const bx = Math.round(box.x);
+      const by = Math.round(box.y);
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const c = cells[y * cols + x];
+          if (!c) continue;
+          const inBox = x >= bx && x < bx + box.w && y >= by && y < by + box.h;
+          if (!reduceMotion && Math.random() < (inBox ? 0.25 : 0.015)) {
+            c.ch = charFor(c.lum);
+          }
+          let alpha = 0.06 + c.lum * 0.8;
+          if (inBox) alpha = Math.min(1, alpha + 0.45);
+          ctx.fillStyle = c.blue
+            ? `rgba(47, 123, 255, ${alpha})`
+            : inBox
+              ? `rgba(122, 172, 255, ${alpha})`
+              : `rgba(200, 210, 225, ${alpha})`;
+          ctx.fillText(c.ch, x * CELL_W, y * CELL_H);
+        }
+      }
+
+      // Scanner frame and readout.
+      const fx = bx * CELL_W - 4;
+      const fy = by * CELL_H - 4;
+      const fw = box.w * CELL_W + 8;
+      const fh = box.h * CELL_H + 8;
+      ctx.strokeStyle = 'rgba(230, 233, 239, 0.85)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(fx + 0.5, fy + 0.5, fw, fh);
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = 'rgba(230, 233, 239, 0.95)';
+      ctx.font = '500 10px "JetBrains Mono", ui-monospace, monospace';
+      ctx.fillText('FPS.SCAN', fx + 4, fy + 4);
+      ctx.fillText('[×]', fx + fw - 22, fy + 4);
+
+      const settled = Math.abs(box.x - box.tx) + Math.abs(box.y - box.ty) < 1;
+      if (settled && !reduceMotion) confidence = Math.min(99.4, confidence + 1.7);
+      const status = settled ? STATUSES[statusIndex] : 'SCANNING…';
+      ctx.fillStyle = 'rgba(163, 173, 187, 0.95)';
+      ctx.fillText(
+        `${status}   MATCH ${confidence.toFixed(1)}%`,
+        fx,
+        fy + fh + 8
+      );
+
+      if (reduceMotion) return;
+
+      // Ease toward the target; follow the pointer when there is one.
+      const target = pointerTarget ?? { x: box.tx, y: box.ty };
+      box.x += (target.x - box.x) * 0.12;
+      box.y += (target.y - box.y) * 0.12;
+      if (!pointerTarget && settled && now - lastRetarget > 3200) {
+        lastRetarget = now;
+        retarget();
+      }
+    }
+
+    let running = false;
+    let visible = true;
+    let last = 0;
+    function loop(now: number) {
+      if (!running) return;
+      if (now - last > 1000 / 24) {
+        last = now;
+        draw(now);
+      }
+      requestAnimationFrame(loop);
+    }
+    function setRunning(on: boolean) {
+      if (reduceMotion || on === running) return;
+      running = on;
+      if (on) requestAnimationFrame(loop);
+    }
+
+    hero.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      const rect = hero.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) / CELL_W - box.w / 2;
+      const cy = (e.clientY - rect.top) / CELL_H - box.h / 2;
+      // Only track while the pointer is over the art.
+      if (cx > artX - box.w && cx < artX + artW && cy > artY - box.h && cy < artY + artH) {
+        pointerTarget = {
+          x: Math.max(artX, Math.min(cx, artX + artW - box.w)),
+          y: Math.max(artY, Math.min(cy, artY + artH - box.h)),
+        };
+      } else {
+        pointerTarget = null;
+      }
+    });
+    hero.addEventListener('pointerleave', () => (pointerTarget = null));
+
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      setRunning(visible && !document.hidden);
+    }).observe(hero);
+    document.addEventListener('visibilitychange', () =>
+      setRunning(visible && !document.hidden)
+    );
+
+    let resizeTimer: number | undefined;
+    new ResizeObserver(() => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        build();
+        draw(performance.now());
+      }, 100);
+    }).observe(hero);
+
+    const img = new Image();
+    img.src = canvas.dataset.src ?? '';
+    img.onload = async () => {
+      source = img;
+      await document.fonts?.ready;
+      build();
+      draw(performance.now());
+      setRunning(visible && !document.hidden);
+    };
+  }
+</script>

@@ -53,7 +53,7 @@ test.describe('FalconProSec site', () => {
       page.getByRole('link', { name: 'Explore Investigations' }).first()
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: 'Explore Tools' })
+      page.getByRole('link', { name: 'Why FalconProSec exists' })
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'A note on accuracy' })

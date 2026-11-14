@@ -4,7 +4,7 @@ description: 'A layout preview for Security & Privacy articles. Only visible in 
 question: '[The reader question this article answers]'
 section: security-privacy
 category: personal-privacy
-topics: ['privacy']
+topics: ['human-vulnerability']
 pubDate: 2026-10-01
 tags: ['example']
 draft: true

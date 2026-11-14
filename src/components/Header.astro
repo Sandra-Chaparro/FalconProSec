@@ -61,7 +61,7 @@ const searchIndex = [
                 href={item.href}
                 aria-current={isActive(item.href) ? 'page' : undefined}
                 class:list={[
-                  'rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                  'rounded-md px-3 py-2 font-mono text-xs font-medium tracking-[0.08em] uppercase transition-colors',
                   isActive(item.href)
                     ? 'text-white'
                     : 'text-muted hover:text-white',

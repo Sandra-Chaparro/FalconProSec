@@ -27,20 +27,20 @@ const empty = investigations.length === 0 && articles.length === 0;
 
 <Layout
   title={topic.label}
-  description={`${topic.description} Investigations and articles about ${topic.label.toLowerCase()} on FalconProSec.`}
+  description={`${topic.description} Investigations and articles on ${topic.label} at FalconProSec.`}
 >
   <PageHeader
-    kicker="Topic"
+    kicker="Area of investigation"
     title={topic.label}
     description={topic.description}
-    breadcrumbs={[{ label: 'Topics' }, { label: topic.label }]}
+    breadcrumbs={[{ label: 'Areas of investigation', href: '/about#areas' }, { label: topic.label }]}
   />
   <div class="container-site mt-12 space-y-16">
     {
       empty ? (
         <EmptyState
           title={`Nothing published on ${topic.label} yet`}
-          description="Investigations and articles on this topic will be gathered here once they are published."
+          description="Investigations and articles in this area will be gathered here once they are published."
           action={{
             href: '/contact?reason=investigation',
             label: 'Suggest a question to investigate',

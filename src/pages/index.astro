@@ -1,11 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import AsciiHero from '../components/AsciiHero.astro';
 import Badge from '../components/Badge.astro';
 import CTASection from '../components/CTASection.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import EmptyState from '../components/EmptyState.astro';
 import Icon from '../components/Icon.astro';
 import InvestigationCard from '../components/InvestigationCard.astro';
+import InvestigationQuestion from '../components/InvestigationQuestion.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import ToolCard from '../components/ToolCard.astro';
 import TopicCard from '../components/TopicCard.astro';
@@ -28,28 +30,76 @@ const featuredTool =
 <Layout description={SITE.description} jsonLd={siteJsonLd()}>
   <!-- Hero -->
   <section class="relative overflow-hidden border-b border-line">
-    <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true">
-    </div>
-    <div class="container-site relative py-20 sm:py-28 lg:py-32">
-      <p class="kicker !text-primary-text">
-        Cybersecurity · Privacy · Technology · AI
-      </p>
-      <h1
-        class="mt-6 max-w-4xl text-5xl leading-[1.05] font-semibold sm:text-6xl lg:text-7xl"
-      >
-        Understanding the risks behind technology.
+    <AsciiHero />
+    <div
+      class="container-site relative flex min-h-[calc(100svh-4rem)] flex-col justify-between gap-16 py-16 sm:py-20 lg:min-h-[44rem]"
+    >
+      <h1 class="sr-only">
+        Technology is powerful. What matters is what we use it for.
+        As technology becomes more powerful, protecting people becomes more important.
       </h1>
-      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">
-        FalconProSec investigates how technology creates security and privacy
-        risks: how information is exposed, collected and misused, and what
-        artificial intelligence changes. Each piece starts with a question and
-        follows the evidence.
-      </p>
-      <div class="mt-10 flex flex-wrap gap-3">
-        <a href="/investigations" class="btn-primary">
-          Explore Investigations <Icon name="arrow-right" size={16} />
-        </a>
-        <a href="/tools" class="btn-secondary">Explore Tools</a>
+
+      <div class="max-w-4xl">
+        <p class="kicker !text-primary-text" data-type data-type-delay="200">
+          Technology · AI · Security · Human impact
+        </p>
+        <p
+          class="hero-title mt-6 text-4xl sm:text-5xl lg:text-6xl"
+          aria-hidden="true"
+        >
+          <span class="block">As technology becomes more powerful,</span>
+          <span class="mt-2 block !text-primary-text"
+            ><span data-type data-type-delay="900" data-type-caret
+              >protecting people becomes more important.</span
+            ></span
+          >
+        </p>
+        <p class="mt-8 max-w-md leading-relaxed text-muted sm:text-lg">
+          FalconProSec investigates where software, AI, cybersecurity and
+          human behavior meet: researching, experimenting and building to
+          understand how technology affects people's trust, safety, identity
+          and opportunity, and how it can protect them.
+        </p>
+        <p class="mt-6 font-mono text-xs text-subtle sm:text-sm">
+          <span class="text-primary-text">&gt;</span> investigating:
+          <span
+            class="text-fg"
+            data-cycle={JSON.stringify(TOPICS.map((t) => t.signal ?? t.label.toLowerCase()))}
+            >{TOPICS[0].signal ?? TOPICS[0].label.toLowerCase()}</span
+          ><span class="type-caret" aria-hidden="true"></span>
+        </p>
+      </div>
+
+      <div class="flex flex-col items-start lg:items-end">
+        <div class="flex flex-wrap gap-3">
+          <a href="/investigations" class="btn-primary">
+            Explore Investigations <Icon name="arrow-right" size={16} />
+          </a>
+          <a href="/about" class="btn-secondary">Why FalconProSec exists</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Central question -->
+  <section class="container-site mt-20" aria-labelledby="question-heading">
+    <h2 id="question-heading" class="sr-only">The question behind this site</h2>
+    <div class="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+      <InvestigationQuestion
+        label="The question behind FalconProSec"
+        question="How can technology be used to solve human problems and protect people as AI changes society?"
+      />
+      <div class="space-y-4 leading-relaxed text-muted">
+        <p>
+          The focus isn't technology for its own sake. It's what happens when
+          technology reaches real people: who it protects, who it exposes, and
+          who it leaves out.
+        </p>
+        <p>
+          Many of these problems don't have a clear job title yet. FalconProSec
+          follows the problem, not the title, and uses whatever discipline the
+          question needs.
+        </p>
       </div>
     </div>
   </section>
@@ -69,18 +119,16 @@ const featuredTool =
         <article class="card relative grid overflow-hidden border-dashed md:grid-cols-[1.1fr_1fr]">
           <div class="flex flex-col gap-6 p-6 sm:p-10">
             <div class="flex items-center gap-3">
-              <Badge tone="amber">Coming soon</Badge>
+              <Badge tone="amber">In progress</Badge>
               <span class="kicker">Investigation</span>
             </div>
             <h3 class="text-2xl font-semibold text-muted sm:text-3xl">
-              [Investigation title]
+              The first investigation is underway
             </h3>
             <p class="leading-relaxed text-subtle">
-              [Short description] The first investigation is being researched.
-              It will appear here once it is ready to be published.
-            </p>
-            <p class="text-sm font-medium text-subtle">
-              Read Investigation <span aria-hidden="true">→</span>
+              Each one starts with a question, works through the evidence and
+              ends with what it means for people. It will appear here once it
+              is ready to publish.
             </p>
           </div>
           <div
@@ -97,9 +145,9 @@ const featuredTool =
   <section class="container-site mt-24" aria-labelledby="topics-heading">
     <SectionHeader
       id="topics-heading"
-      kicker="Topics"
-      title="What this site explores"
-      description="The areas where technology, information and people meet, and where risk tends to appear."
+      kicker="Areas of investigation"
+      title="The problems under investigation"
+      description="These aren't specialties to choose between. They're human problems, and each one draws on whatever the question needs: software engineering, security, AI, investigation or research."
     />
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {
@@ -118,12 +166,13 @@ const featuredTool =
       <div>
         <p class="kicker !text-primary-text">Featured tool</p>
         <h2 id="tool-heading" class="mt-3 text-2xl font-semibold sm:text-3xl">
-          Learn by doing, not just reading
+          Building to understand
         </h2>
         <p class="mt-3 leading-relaxed text-muted">
-          Small interactive tools and exercises that make security and privacy
-          concepts concrete. They are being built one at a time and are marked
-          clearly until they work.
+          Some questions are easier to understand by building something. These
+          are small tools aimed at risks that reach real people, each one
+          starting from a question. They're built one at a time, and each is
+          clearly marked until it works.
         </p>
         <a href="/tools" class="link mt-5 inline-block text-sm">
           See all tools
@@ -154,10 +203,10 @@ const featuredTool =
         <EmptyState
           icon="search"
           title="Investigations are in progress"
-          description="New investigations will be listed here as they are published. Have a question you think is worth investigating?"
+          description="Published investigations will be listed here. Is there a question about technology and people you think deserves a closer look?"
           action={{
             href: '/contact?reason=investigation',
-            label: 'Suggest an investigation',
+            label: 'Suggest a question',
           }}
         />
       )
@@ -175,19 +224,20 @@ const featuredTool =
       </div>
       <div class="space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          Technology makes it easy to share, store and connect information, and
-          just as easy to expose it. Most of the risk is not in exotic attacks
-          but in ordinary things: what is public, what is collected, and how
-          people can be persuaded.
+          Technology is built by engineers, but its consequences are lived by
+          everyone else. AI can now produce a convincing voice, face or message
+          almost for free, and the systems people depend on for healthcare,
+          school, money and public services are increasingly automated.
         </p>
         <p>
-          This site asks specific questions about those risks, researches them
-          using public information, and explains what the evidence shows and
-          what it means for security and privacy. Expect clear explanations,
-          listed sources, and open corrections.
+          Solving customer problems isn't enough. FalconProSec exists to study
+          the human problems emerging where technology, AI, security and human
+          behavior meet, ideally before they become impossible to ignore. It is
+          an evolving space of questions, experiments and findings, with
+          sources listed and corrections made openly.
         </p>
         <a href="/about" class="link inline-block text-base">
-          More about the approach
+          About the person behind it
         </a>
       </div>
     </div>
@@ -197,13 +247,64 @@ const featuredTool =
   <section class="container-site mt-24 space-y-8">
     <CTASection
       title="Have a question worth investigating?"
-      description="Suggestions, corrections and additional context are always welcome."
+      description="Especially one about how technology affects people. Suggestions, corrections and added context are always welcome."
       primary={{
         href: '/contact?reason=investigation',
-        label: 'Suggest an investigation',
+        label: 'Suggest a question',
       }}
-      secondary={{ href: '/about', label: 'How investigations work' }}
+      secondary={{ href: '/about#method', label: 'How investigations work' }}
     />
     <Disclaimer />
   </section>
 </Layout>
+
+<script>
+  // Typewriter effects for the hero. The full text is in the HTML, so the page
+  // reads correctly without JavaScript or with reduced motion.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduceMotion) {
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    // The untyped remainder stays in place but invisible, so lines don't
+    // reflow while typing.
+    document.querySelectorAll<HTMLElement>('[data-type]').forEach(async (el) => {
+      const text = el.textContent?.trim() ?? '';
+      const typed = document.createElement('span');
+      const rest = document.createElement('span');
+      rest.style.visibility = 'hidden';
+      rest.textContent = text;
+      el.replaceChildren(typed);
+      if (el.hasAttribute('data-type-caret')) {
+        const caret = document.createElement('span');
+        caret.className = 'type-caret';
+        el.append(caret);
+      }
+      el.append(rest);
+      await sleep(Number(el.dataset.typeDelay ?? 0));
+      for (let i = 1; i <= text.length; i++) {
+        typed.textContent = text.slice(0, i);
+        rest.textContent = text.slice(i);
+        await sleep(text[i - 1] === ' ' ? 30 : 30 + Math.random() * 50);
+      }
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-cycle]').forEach(async (el) => {
+      const words: string[] = JSON.parse(el.dataset.cycle ?? '[]');
+      let i = 0;
+      await sleep(2500);
+      for (;;) {
+        await sleep(3200);
+        while (el.textContent) {
+          el.textContent = el.textContent.slice(0, -1);
+          await sleep(25);
+        }
+        i = (i + 1) % words.length;
+        for (const ch of words[i]) {
+          el.textContent += ch;
+          await sleep(45 + Math.random() * 40);
+        }
+      }
+    });
+  }
+</script>

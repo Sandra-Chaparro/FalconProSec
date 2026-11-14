@@ -12,9 +12,9 @@ section: security-privacy
 #   technology: artificial-intelligence, emerging-technology, technology-privacy,
 #               technology-security, how-technology-works, ai-security
 category: personal-privacy
-# topics link the article to /topics/<topic> pages:
-# cybersecurity | privacy | osint | social-engineering | ai-security | data-exposure
-topics: ['privacy']
+# topics link the article to /topics/<area> pages (areas of investigation):
+# human-vulnerability | trust-identity | ai-decision-making | human-connection | access-opportunity | human-safety
+topics: ['human-vulnerability']
 pubDate: 2026-01-01
 tags: ['example-tag']
 draft: true

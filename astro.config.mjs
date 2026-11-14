@@ -12,10 +12,29 @@ const comingSoonTools = JSON.parse(
   .filter((/** @type {{ status: string }} */ t) => t.status !== 'available')
   .map((/** @type {{ id: string }} */ t) => `/tools/${t.id}`);
 
+// Topics were reorganised from disciplines into areas of investigation.
+// Keep the old URLs working.
+/** @type {Record<string, string>} */
+const renamedTopics = {
+  cybersecurity: 'human-safety',
+  privacy: 'trust-identity',
+  osint: 'human-vulnerability',
+  'social-engineering': 'human-vulnerability',
+  'ai-security': 'ai-decision-making',
+  'data-exposure': 'human-vulnerability',
+};
+const topicRedirects = Object.fromEntries(
+  Object.entries(renamedTopics).flatMap(([from, to]) => [
+    [`/topics/${from}`, `/topics/${to}`],
+    [`/investigations/topic/${from}`, `/investigations/topic/${to}`],
+  ])
+);
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://falconprosec.com',
   trailingSlash: 'never',
+  redirects: topicRedirects,
   integrations: [
     sitemap({
       // Utility pages that should not appear in search results.

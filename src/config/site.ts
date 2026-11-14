@@ -5,9 +5,9 @@
 export const SITE = {
   name: 'FalconProSec',
   url: 'https://falconprosec.com',
-  tagline: 'Understanding the risks behind technology.',
+  tagline: 'Technology, security & human impact.',
   description:
-    'Independent investigations and explainers on cybersecurity, privacy, AI and the ways information can be exposed or misused.',
+    'An independent research space investigating how technology and AI affect human trust, safety, identity and opportunity, and how they can be used to protect people.',
   locale: 'en',
   ogImage: '/og-default.jpg',
   ogImageAlt: 'FalconProSec logo: a stylised falcon inside a shield outline',
@@ -55,7 +55,7 @@ export const CONTACT = {
   reasons: [
     { value: 'general', label: 'General question' },
     { value: 'correction', label: 'Correction' },
-    { value: 'investigation', label: 'Suggest an investigation' },
+    { value: 'investigation', label: 'Suggest a question to investigate' },
     { value: 'feedback', label: 'Feedback' },
     { value: 'collaboration', label: 'Collaboration' },
   ],

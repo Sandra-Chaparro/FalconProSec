@@ -12,12 +12,12 @@ const upcoming = tools.filter((t) => t.data.status !== 'available');
 
 <Layout
   title="Tools"
-  description="Small interactive tools and exercises for understanding security and privacy risks. Tools in development are clearly marked."
+  description="Small tools built to understand, and help people resist, the ways technology is used against them. Tools in development are clearly marked."
 >
   <PageHeader
     kicker="Tools"
-    title="Interactive security & privacy tools"
-    description="Small, practical tools and exercises that make security and privacy concepts concrete. Each one is built to explain, not just to output a result."
+    title="Building to understand"
+    description="Some questions are easier to understand by building something. Each tool starts from a question about how people get manipulated, exposed or misled, and is built to explain, not just to output a result."
   />
 
   <div class="container-site mt-12 space-y-16">
@@ -39,8 +39,8 @@ const upcoming = tools.filter((t) => t.data.status !== 'available');
     <section aria-labelledby="upcoming-heading">
       <h2 id="upcoming-heading" class="text-2xl font-semibold">In development</h2>
       <p class="mt-2 mb-6 max-w-2xl text-muted">
-        These tools are planned or being built. They are not functional yet and
-        are marked “Coming soon” until they are.
+        These are planned or being built. They are not functional yet and are
+        marked “Coming soon” until they are.
       </p>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {upcoming.map((tool) => <ToolCard tool={tool} />)}

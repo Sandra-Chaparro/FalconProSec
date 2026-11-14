@@ -3,7 +3,8 @@
     "id": "phishing-awareness-quiz",
     "title": "Phishing awareness quiz",
     "summary": "Look at realistic example messages and decide which ones are suspicious, with an explanation of the warning signs for each.",
-    "category": "Social engineering",
+    "question": "What makes a fraudulent message convincing, and which warning signs can people reliably learn to spot?",
+    "category": "Human vulnerability",
     "status": "coming-soon",
     "icon": "mail",
     "featured": true
@@ -12,7 +13,8 @@
     "id": "privacy-checklist",
     "title": "Privacy checklist",
     "summary": "A step-by-step checklist for reviewing the privacy settings and habits that affect how much of your information is exposed.",
-    "category": "Personal privacy",
+    "question": "Which everyday settings and habits most affect how much of a person’s life is exposed?",
+    "category": "Human vulnerability",
     "status": "coming-soon",
     "icon": "check"
   },
@@ -20,7 +22,8 @@
     "id": "social-engineering-scenario",
     "title": "Social engineering scenario",
     "summary": "An interactive scenario where you choose how to respond to a manipulation attempt and see how each choice plays out.",
-    "category": "Social engineering",
+    "question": "How does a manipulation attempt play out in the moment, and which choices give people a way out?",
+    "category": "Human vulnerability",
     "status": "coming-soon",
     "icon": "users"
   },
@@ -28,7 +31,8 @@
     "id": "security-risk-self-assessment",
     "title": "Security risk self-assessment",
     "summary": "Answer a short set of questions about your accounts and devices to identify the areas most worth improving first.",
-    "category": "Security awareness",
+    "question": "If someone only has time to fix a few things, which ones protect them most?",
+    "category": "Human safety",
     "status": "coming-soon",
     "icon": "gauge"
   },
@@ -36,7 +40,8 @@
     "id": "url-domain-information",
     "title": "URL & domain information tool",
     "summary": "Break down a link into its parts and explain what each part means, to help spot look-alike and misleading addresses.",
-    "category": "Online exposure",
+    "question": "How can someone tell whether a link really leads where it claims to?",
+    "category": "Trust & identity",
     "status": "coming-soon",
     "icon": "link"
   },
@@ -44,7 +49,8 @@
     "id": "data-exposure-checklist",
     "title": "Data exposure checklist",
     "summary": "Work through the common places personal or organisational information ends up publicly visible, and what to check in each.",
-    "category": "Data exposure",
+    "question": "Where does personal and organisational information end up public without anyone deciding it should?",
+    "category": "Human vulnerability",
     "status": "coming-soon",
     "icon": "layers"
   },
@@ -52,7 +58,8 @@
     "id": "security-awareness-exercises",
     "title": "Security awareness exercises",
     "summary": "Short, self-paced exercises that build the habit of pausing and checking before clicking, sharing, or signing in.",
-    "category": "Security awareness",
+    "question": "Does a small, repeated habit of pausing before acting protect people better than memorising rules?",
+    "category": "Human vulnerability",
     "status": "coming-soon",
     "icon": "book"
   }

@@ -7,8 +7,8 @@ description: 'One or two sentences summarising the investigation for cards, sear
 question: 'The specific question this investigation answers?'
 pubDate: 2026-01-01
 # updatedDate: 2026-01-15
-# topic: cybersecurity | privacy | osint | social-engineering | ai-security | data-exposure
-topic: privacy
+# topic: human-vulnerability | trust-identity | ai-decision-making | human-connection | access-opportunity | human-safety
+topic: human-vulnerability
 tags: ['example-tag']
 # heroImage: ./images/my-image.jpg   # stored next to this file
 # heroAlt: 'Describe the image for screen readers'
@@ -25,22 +25,26 @@ corrections: []
 #     note: 'Describe what was corrected and why.'
 ---
 
-## Background
+## Why this question matters
 
-Why this question matters and the context a reader needs.
+Why this question matters, who it affects, and the context a reader needs.
 
-## Evidence & research
+## Evidence
 
-What was examined, how, and what was found. Link to sources.
+What was examined and how. Link every claim to a source.
 
-## Findings
+## Analysis
 
-What the evidence shows. Be explicit about what is confirmed and what is uncertain.
+What the evidence supports. Be explicit about what is confirmed and what is uncertain.
 
-## What the findings mean
+## Experiment
 
-Interpretation: what conclusions are reasonable, and which are not.
+What was built, tested or simulated to see the problem in practice (a controlled environment, a prototype, a walkthrough). Leave this section out if there was no experiment.
 
-## Security & privacy implications
+## Insight
 
-What this means in practice for individuals or organisations, and what can be done.
+What was learned, including what was surprising and what remains unknown.
+
+## Why it matters to people
+
+What this means for the people affected, and what they or others can realistically do.

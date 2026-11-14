@@ -1,10 +1,13 @@
 # FalconProSec
 
-**Understanding the risks behind technology.**
+**Technology, security & human impact.**
 
-FalconProSec is an independent investigation and awareness site covering
-cybersecurity, privacy, technology, artificial intelligence, OSINT, social
-engineering and data exposure.
+FalconProSec is a personal research and experimentation space investigating
+how technology and AI affect human trust, safety, identity and opportunity,
+and how they can be used to protect people. Work is organised around six
+areas of investigation (human problems, not career tracks): Human
+Vulnerability, Trust & Identity, AI & Human Decision-Making, Human Connection,
+Access & Opportunity, and Human Safety.
 
 Live site: https://falconprosec.com
 
@@ -36,7 +39,7 @@ npm run dev            # http://localhost:4321
 ```
 src/
   config/site.ts          Site name, URL, navigation, footer links, contact settings
-  data/taxonomy.ts        Topics, section categories, open questions
+  data/taxonomy.ts        Areas of investigation (TOPICS), section categories, open questions
   content.config.ts       Content collection schemas
   content/
     investigations/       Investigations (Markdown)
@@ -60,9 +63,8 @@ src/
    `/investigations/what-a-public-email-reveals`.
 2. Fill in the frontmatter: `title`, `description`, `question`, `pubDate`,
    `topic`, `tags`, `sources`.
-3. Write the body under the standard headings: Background → Evidence &
-   research → Findings → What the findings mean → Security & privacy
-   implications.
+3. Write the body under the standard headings: Why this question matters → Evidence →
+   Analysis → Experiment → Insight → Why it matters to people.
 4. Keep `draft: true` while writing (visible only in `npm run dev`). Set it to
    `false` to publish. Set `featured: true` to feature it on the home page.
 5. To record a correction, add an entry to `corrections` with a date and note.
@@ -81,7 +83,8 @@ The `category` must be one of the categories listed for that section in
 
 1. Build the tool as `src/components/tools/<Name>.astro`.
 2. Register it in `src/components/tools/index.ts` under the tool's `id`.
-3. Change its `status` to `"available"` in `src/content/tools.json`.
+3. Change its `status` to `"available"` in `src/content/tools.json`. Give it a
+   `question`: the question the tool helps investigate.
 
 Tools marked `coming-soon` show a clear “Coming soon” badge, their pages are
 `noindex`, and they are excluded from the sitemap.
