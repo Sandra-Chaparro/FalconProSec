@@ -12,9 +12,14 @@ import SectionHeader from '../components/SectionHeader.astro';
 import ToolCard from '../components/ToolCard.astro';
 import TopicCard from '../components/TopicCard.astro';
 import { SITE } from '../config/site';
-import { TOPICS } from '../data/taxonomy';
+import { TOPICS, type Term } from '../data/taxonomy';
 import { getInvestigations, getTools, pickFeatured } from '../lib/content';
 import { siteJsonLd } from '../lib/seo';
+
+// Phrases cycled in the hero's "investigating:" line.
+const signals = (TOPICS as readonly Term[]).map(
+  (t) => t.signal ?? t.label.toLowerCase()
+);
 
 const investigations = await getInvestigations();
 const featured = pickFeatured(investigations);
@@ -55,17 +60,16 @@ const featuredTool =
           >
         </p>
         <p class="mt-8 max-w-md leading-relaxed text-muted sm:text-lg">
-          FalconProSec investigates where software, AI, cybersecurity and
-          human behavior meet: researching, experimenting and building to
-          understand how technology affects people's trust, safety, identity
-          and opportunity, and how it can protect them.
+          An independent research project on how technology puts people at
+          risk: exposing emerging threats, testing how they work, and turning
+          findings into guidance people can use to defend themselves.
         </p>
         <p class="mt-6 font-mono text-xs text-subtle sm:text-sm">
           <span class="text-primary-text">&gt;</span> investigating:
           <span
             class="text-fg"
-            data-cycle={JSON.stringify(TOPICS.map((t) => t.signal ?? t.label.toLowerCase()))}
-            >{TOPICS[0].signal ?? TOPICS[0].label.toLowerCase()}</span
+            data-cycle={JSON.stringify(signals)}
+            >{signals[0]}</span
           ><span class="type-caret" aria-hidden="true"></span>
         </p>
       </div>

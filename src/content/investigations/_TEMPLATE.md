@@ -7,7 +7,7 @@ description: 'One or two sentences summarising the investigation for cards, sear
 question: 'The specific question this investigation answers?'
 pubDate: 2026-01-01
 # updatedDate: 2026-01-15
-# topic: human-vulnerability | trust-identity | ai-decision-making | human-connection | access-opportunity | human-safety
+# topic: human-vulnerability | trust-identity | ai-decision-making | human-connections | human-safety
 topic: human-vulnerability
 tags: ['example-tag']
 # heroImage: ./images/my-image.jpg   # stored next to this file
