@@ -2,10 +2,13 @@
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
 import { NAV_ITEMS } from '../config/site';
-import { SECTIONS } from '../data/taxonomy';
+import { RESEARCH_QUESTIONS, SECTIONS, TOPICS } from '../data/taxonomy';
 import {
   articleUrl,
+  findingUrl,
+  formatLabel,
   getArticles,
+  getFindings,
   getInvestigations,
   getTools,
   investigationUrl,
@@ -16,18 +19,39 @@ const isActive = (href: string) =>
   href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
 
 // Client-side search index across all content types.
-const [investigations, articles, tools] = await Promise.all([
+const [investigations, findings, articles, tools] = await Promise.all([
   getInvestigations(),
+  getFindings(),
   getArticles(),
   getTools(),
 ]);
 const searchIndex = [
   ...investigations.map((i) => ({
-    type: 'Investigation',
+    type: formatLabel(i),
     title: i.data.title,
     description: i.data.description,
     url: investigationUrl(i),
     keywords: [i.data.topic, i.data.question, ...i.data.tags].join(' '),
+  })),
+  ...findings.map((f) => ({
+    type: 'Finding',
+    title: f.data.title,
+    description: f.data.statement,
+    url: findingUrl(f),
+    keywords: [...f.data.areas, f.data.description].join(' '),
+  })),
+  ...TOPICS.map((t) => ({
+    type: 'Area of inquiry',
+    title: t.label,
+    description: t.inquiry,
+    url: `/topics/${t.slug}`,
+    keywords: [
+      t.description,
+      ...t.disciplines,
+      ...RESEARCH_QUESTIONS.filter((q) => (q.areas as string[]).includes(t.slug)).map(
+        (q) => q.question
+      ),
+    ].join(' '),
   })),
   ...articles.map((a) => ({
     type: SECTIONS[a.data.section].label,
@@ -41,7 +65,7 @@ const searchIndex = [
     title: t.data.title,
     description: t.data.summary,
     url: `/tools/${t.id}`,
-    keywords: t.data.category,
+    keywords: [t.data.category, t.data.kind, t.data.question ?? ''].join(' '),
   })),
 ];
 ---

@@ -5,6 +5,8 @@
     "summary": "Look at realistic example messages and decide which ones are suspicious, with an explanation of the warning signs for each.",
     "question": "What makes a fraudulent message convincing, and which warning signs can people reliably learn to spot?",
     "category": "Human vulnerability",
+    "kind": "educational tool",
+    "area": "human-vulnerability",
     "status": "coming-soon",
     "icon": "mail",
     "featured": true
@@ -15,6 +17,8 @@
     "summary": "A step-by-step checklist for reviewing the privacy settings and habits that affect how much of your information is exposed.",
     "question": "Which everyday settings and habits most affect how much of a person’s life is exposed?",
     "category": "Human vulnerability",
+    "kind": "educational tool",
+    "area": "human-vulnerability",
     "status": "coming-soon",
     "icon": "check"
   },
@@ -24,6 +28,8 @@
     "summary": "An interactive scenario where you choose how to respond to a manipulation attempt and see how each choice plays out.",
     "question": "How does a manipulation attempt play out in the moment, and which choices give people a way out?",
     "category": "Human vulnerability",
+    "kind": "simulator",
+    "area": "human-vulnerability",
     "status": "coming-soon",
     "icon": "users"
   },
@@ -33,6 +39,8 @@
     "summary": "Answer a short set of questions about your accounts and devices to identify the areas most worth improving first.",
     "question": "If someone only has time to fix a few things, which ones protect them most?",
     "category": "Human safety",
+    "kind": "educational tool",
+    "area": "human-safety",
     "status": "coming-soon",
     "icon": "gauge"
   },
@@ -42,6 +50,8 @@
     "summary": "Break down a link into its parts and explain what each part means, to help spot look-alike and misleading addresses.",
     "question": "How can someone tell whether a link really leads where it claims to?",
     "category": "Trust & identity",
+    "kind": "analysis tool",
+    "area": "trust-identity",
     "status": "coming-soon",
     "icon": "link"
   },
@@ -51,6 +61,8 @@
     "summary": "Work through the common places personal or organisational information ends up publicly visible, and what to check in each.",
     "question": "Where does personal and organisational information end up public without anyone deciding it should?",
     "category": "Human vulnerability",
+    "kind": "educational tool",
+    "area": "human-vulnerability",
     "status": "coming-soon",
     "icon": "layers"
   },
@@ -60,6 +72,8 @@
     "summary": "Short, self-paced exercises that build the habit of pausing and checking before clicking, sharing, or signing in.",
     "question": "Does a small, repeated habit of pausing before acting protect people better than memorising rules?",
     "category": "Human vulnerability",
+    "kind": "experiment",
+    "area": "human-vulnerability",
     "status": "coming-soon",
     "icon": "book"
   }

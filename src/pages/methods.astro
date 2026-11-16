@@ -1,0 +1,216 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CTASection from '../components/CTASection.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+
+const stages = [
+  {
+    step: 'Question',
+    text: 'Define what needs to be understood, as specifically as possible. A good question names the people affected and the mechanism in doubt.',
+  },
+  {
+    step: 'Evidence',
+    text: 'Gather what can be documented: public reporting, primary sources, technical artefacts, published research, and observed behavior. Each source is listed so it can be checked.',
+  },
+  {
+    step: 'Investigation',
+    text: 'Examine the problem through each discipline it needs: how the technology works, how people behave around it, and which assumptions or vulnerabilities are being relied on.',
+  },
+  {
+    step: 'Testing',
+    text: 'When it helps, reproduce, simulate or build something in a controlled environment to see whether the explanation holds. Not every question needs this, and it is skipped when it would not add evidence.',
+  },
+  {
+    step: 'Findings',
+    text: 'Document what the evidence supports, kept separate from interpretation and hypothesis. When several investigations point the same way, that becomes a finding.',
+  },
+  {
+    step: 'Implications',
+    text: 'Explain why it matters to people, organisations, technology or society, and what could realistically reduce the risk.',
+  },
+  {
+    step: 'Further questions',
+    text: 'State what remains unknown. Those gaps go back onto the research agenda and shape the next investigation.',
+  },
+];
+
+const humanQuestions = [
+  'Who can be affected?',
+  'How can they be affected?',
+  'Why does the technology make the problem possible?',
+  'What human behavior is involved?',
+  'What assumptions or vulnerabilities are being exploited?',
+  'What evidence helps people understand the risk?',
+  'What could reduce the risk?',
+  'What remains unknown?',
+];
+
+const principles = [
+  {
+    title: 'Evidence and interpretation stay separate',
+    text: 'Investigations and findings label what is documented, what is observed, what is interpreted and what is hypothesised. Speculation is not presented as fact.',
+  },
+  {
+    title: 'Real people are handled with care',
+    text: 'When an investigation involves named people, it relies on what has been publicly reported and attributes it, and it does not go further than the sources do. Allegations are described as allegations.',
+  },
+  {
+    title: 'Experiments are contained',
+    text: 'Testing happens in controlled environments, on systems FalconProSec owns or has permission to use. No one is deceived or tested without their knowledge.',
+  },
+  {
+    title: 'Corrections are public',
+    text: 'Errors are corrected on the page they affect and logged with a date. Findings carry a status that can change, including to "revised".',
+  },
+  {
+    title: 'Limits are stated',
+    text: 'If something has not been demonstrated, the page says so. An honest "this is not yet known" is more useful than a confident guess.',
+  },
+];
+---
+
+<Layout
+  title="Methods"
+  description="How FalconProSec investigates: from a specific question through evidence, multidisciplinary analysis and testing to findings, implications and new questions."
+>
+  <PageHeader
+    kicker="Methods"
+    title="How investigations are conducted"
+    description="A consistent way of thinking, not a rigid protocol. Investigations differ: some rely on public reporting, some on testing, some on both. What stays constant is the discipline of following evidence, separating it from interpretation, and saying what remains unknown."
+  />
+
+  <div class="container-site mt-16 space-y-24">
+    <section aria-labelledby="stages-heading">
+      <SectionHeader
+        id="stages-heading"
+        kicker="The approach"
+        title="From a question to the next question"
+        description="The stages below describe the usual order. In practice they loop: evidence reshapes the question, and testing sends an investigation back to the sources."
+      />
+      <ol class="space-y-px overflow-hidden rounded-xl border border-line bg-line">
+        {
+          stages.map((s, i) => (
+            <li class="grid gap-2 bg-ink p-6 sm:grid-cols-[3rem_12rem_1fr] sm:items-baseline sm:gap-6">
+              <span class="font-mono text-sm text-primary-text">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p class="font-heading text-lg font-semibold text-white">{s.step}</p>
+              <p class="leading-relaxed text-muted">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="human-heading">
+      <div>
+        <h2 id="human-heading" class="text-2xl font-semibold sm:text-3xl">
+          The human questions
+        </h2>
+        <p class="mt-3 text-muted">
+          Technical analysis matters, but it has to connect back to people.
+          Every investigation works through these questions, even when some of
+          the answers are "unknown".
+        </p>
+      </div>
+      <ul class="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2">
+        {
+          humanQuestions.map((q) => (
+            <li class="flex gap-3 bg-ink p-5 text-fg">
+              <span class="font-mono text-primary-text" aria-hidden="true">?</span>
+              <span>{q}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="disciplines-heading">
+      <h2 id="disciplines-heading" class="text-2xl font-semibold sm:text-3xl">
+        Disciplines as lenses
+      </h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          Each investigation uses the disciplines its question needs:
+          cybersecurity to understand how an attack or failure works, software
+          engineering to understand how systems are built and where they break,
+          AI to understand what generated content can and cannot do, and
+          psychology and behavioral science to understand why people respond
+          the way they do.
+        </p>
+        <p>
+          Specific techniques, such as open-source research, log analysis or
+          building a test environment, are tools inside an investigation. They
+          are chosen because the question requires them, not to demonstrate
+          them.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="formats-heading">
+      <h2 id="formats-heading" class="text-2xl font-semibold sm:text-3xl">
+        Investigations and briefs
+      </h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          <strong class="text-fg">An investigation</strong> is original work.
+          It gathers and compares evidence across sources, examines the problem
+          through the disciplines it needs, tests where possible, and works
+          through the human questions above.
+        </p>
+        <p>
+          <strong class="text-fg">A brief</strong> is shorter. It analyses a
+          publicly reported case, using published reporting that is credited
+          and linked, and uses it to frame a question. It does not present new
+          evidence. A brief is often the starting point for an investigation,
+          and links to it once one exists.
+        </p>
+        <p>
+          Every piece is labelled as one or the other, so it is always clear
+          what kind of work you are reading.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="build-heading">
+      <h2 id="build-heading" class="text-2xl font-semibold sm:text-3xl">
+        Building to investigate
+      </h2>
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          Some questions are only answerable by building something: an
+          experiment, a simulator, a visualization, a prototype. When an
+          investigation or finding creates that need, the result is published
+          as a <a href="/tools" class="link">tool</a>, linked to the work that
+          prompted it.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="principles-heading">
+      <SectionHeader
+        id="principles-heading"
+        kicker="Principles"
+        title="Standards every investigation is held to"
+      />
+      <ul class="grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+        {
+          principles.map((p) => (
+            <li class="bg-ink p-6">
+              <p class="font-heading font-semibold text-white">{p.title}</p>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{p.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <CTASection
+      title="See the method applied"
+      description="Each investigation shows its question, sources, analysis and open questions. Corrections and added context are welcome."
+      primary={{ href: '/investigations', label: 'Read the investigations' }}
+      secondary={{ href: '/findings', label: 'How findings are formed' }}
+    />
+  </div>
+</Layout>

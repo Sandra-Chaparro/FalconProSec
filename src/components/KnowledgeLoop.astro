@@ -1,0 +1,52 @@
+---
+/**
+ * The progression every piece of work feeds into:
+ * Question → Investigation → Evidence → Finding → Pattern → Experiment → New question.
+ */
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+
+const steps = [
+  { step: 'Question', text: 'Something specific that needs to be understood.' },
+  { step: 'Investigation', text: 'The problem examined from every discipline it needs.' },
+  { step: 'Evidence', text: 'What can be documented, sourced and checked.' },
+  { step: 'Finding', text: 'What the evidence supports, and how strongly.' },
+  { step: 'Pattern', text: 'What recurs across investigations.' },
+  { step: 'Experiment', text: 'Something built or tested to probe the pattern.' },
+  { step: 'New question', text: 'What remains unknown becomes the next question.' },
+];
+---
+
+{
+  compact ? (
+    <ol
+      class="flex flex-wrap items-center gap-x-2 gap-y-2 font-mono text-xs tracking-wide text-subtle uppercase"
+      aria-label="How knowledge builds"
+    >
+      {steps.map((s, i) => (
+        <li class="flex items-center gap-2">
+          {i > 0 && <span class="text-primary-text" aria-hidden="true">→</span>}
+          <span>{s.step}</span>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <ol
+      class="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-7"
+      aria-label="How knowledge builds"
+    >
+      {steps.map((s, i) => (
+        <li class="bg-ink p-5">
+          <span class="font-mono text-sm text-primary-text">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <p class="mt-2 font-heading font-semibold text-white">{s.step}</p>
+          <p class="mt-1 text-sm leading-relaxed text-muted">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  )
+}

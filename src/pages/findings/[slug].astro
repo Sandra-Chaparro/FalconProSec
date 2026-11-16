@@ -1,0 +1,131 @@
+---
+import { getEntries, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ArticleMeta from '../../components/ArticleMeta.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CorrectionsLog from '../../components/CorrectionsLog.astro';
+import Disclaimer from '../../components/Disclaimer.astro';
+import FindingStatus from '../../components/FindingStatus.astro';
+import InvestigationCard from '../../components/InvestigationCard.astro';
+import SourcesList from '../../components/SourcesList.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { SITE } from '../../config/site';
+import { getTopic } from '../../data/taxonomy';
+import { getFindings, readingTime } from '../../lib/content';
+import { articleJsonLd } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  const all = await getFindings();
+  return all.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content, headings } = await render(entry);
+// Only link to investigations that are themselves visible.
+const basis = (await getEntries(data.investigations)).filter(
+  (i) => import.meta.env.DEV || !i.data.draft
+);
+const areas = data.areas.flatMap((a) => {
+  const t = getTopic(a);
+  return t ? [t] : [];
+});
+---
+
+<Layout
+  title={data.title}
+  description={data.description}
+  type="article"
+  publishedTime={data.pubDate}
+  modifiedTime={data.updatedDate}
+  noindex={data.draft}
+  jsonLd={articleJsonLd({
+    title: data.title,
+    description: data.description,
+    pubDate: data.pubDate,
+    updatedDate: data.updatedDate,
+    url: new URL(Astro.url.pathname, Astro.site ?? SITE.url).href,
+    keywords: areas.map((a) => a.label),
+  })}
+>
+  <article>
+    <header class="relative overflow-hidden border-b border-line">
+      <div class="hero-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+      <div class="container-site relative py-12 sm:py-16">
+        <Breadcrumbs items={[{ label: 'Findings', href: '/findings' }, { label: data.title }]} />
+        <div class="flex flex-wrap items-center gap-3">
+          <FindingStatus status={data.status} />
+          <ArticleMeta
+            label={`Finding · ${areas.map((a) => a.label).join(' · ')}`}
+            pubDate={data.pubDate}
+            updatedDate={data.updatedDate}
+            readingTime={readingTime(entry.body)}
+            draft={data.draft}
+          />
+        </div>
+        <h1 class="mt-5 max-w-4xl text-4xl leading-tight font-semibold sm:text-5xl">
+          {data.title}
+        </h1>
+        <div class="mt-8 max-w-3xl border-l-2 border-primary pl-5">
+          <p class="kicker">The finding</p>
+          <p class="mt-2 font-heading text-xl leading-snug text-fg sm:text-2xl">
+            {data.statement}
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="container-site mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_240px]">
+      <div class="min-w-0">
+        <div class="prose prose-invert prose-lg prose-site prose-investigation max-w-none">
+          <Content />
+        </div>
+
+        {
+          data.openQuestions.length > 0 && (
+            <section class="mt-14" aria-labelledby="open-heading">
+              <h2 id="open-heading" class="text-xl font-semibold">What remains unknown</h2>
+              <ul class="mt-4 space-y-3">
+                {data.openQuestions.map((q) => (
+                  <li class="flex gap-3 text-fg">
+                    <span class="font-mono text-primary-text" aria-hidden="true">?</span>
+                    <span>{q}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <div class="mt-14 space-y-10">
+          <CorrectionsLog corrections={data.corrections} />
+          <SourcesList sources={data.sources} />
+          <Disclaimer headingLevel="h2" />
+        </div>
+      </div>
+      <aside class="hidden lg:block">
+        <div class="sticky top-24 space-y-8">
+          <TableOfContents headings={headings} />
+          <a href="/contact?reason=correction" class="link block text-sm">
+            Suggest a correction
+          </a>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  {
+    basis.length > 0 && (
+      <section class="container-site mt-20" aria-labelledby="basis-heading">
+        <h2 id="basis-heading" class="mb-6 text-2xl font-semibold">
+          The investigations behind this finding
+        </h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {basis.map((item) => (
+            <InvestigationCard item={item} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Layout>

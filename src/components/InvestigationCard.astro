@@ -4,6 +4,7 @@ import ArticleMeta from './ArticleMeta.astro';
 import CategoryList from './CategoryList.astro';
 import { getTopic } from '../data/taxonomy';
 import {
+  formatLabel,
   investigationUrl,
   readingTime,
   type Investigation,
@@ -20,6 +21,7 @@ const { data } = item;
 const Heading = headingLevel;
 const topic = getTopic(data.topic);
 const url = investigationUrl(item);
+const format = formatLabel(item);
 ---
 
 {
@@ -28,7 +30,7 @@ const url = investigationUrl(item);
       <div class="flex flex-col justify-between gap-8 p-6 sm:p-10">
         <div>
           <ArticleMeta
-            label={`Investigation · ${topic?.label ?? data.topic}`}
+            label={`${format} · ${topic?.label ?? data.topic}`}
             pubDate={data.pubDate}
             readingTime={readingTime(item.body)}
             draft={data.draft}
@@ -63,7 +65,7 @@ const url = investigationUrl(item);
   ) : (
     <article class="card-interactive relative flex h-full flex-col p-6">
       <ArticleMeta
-        label={topic?.label ?? data.topic}
+        label={`${format} · ${topic?.label ?? data.topic}`}
         pubDate={data.pubDate}
         draft={data.draft}
       />
@@ -77,7 +79,7 @@ const url = investigationUrl(item);
       </p>
       <CategoryList categories={data.categories} class="mt-4" />
       <p class="mt-auto pt-5 text-sm font-medium text-primary-text">
-        Read investigation <span aria-hidden="true">→</span>
+        Read {format.toLowerCase()} <span aria-hidden="true">→</span>
       </p>
     </article>
   )

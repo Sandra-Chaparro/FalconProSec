@@ -5,7 +5,9 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import Icon, { type IconName } from '../components/Icon.astro';
 import InvestigationQuestion from '../components/InvestigationQuestion.astro';
-import type { Tool } from '../lib/content';
+import { getTopic } from '../data/taxonomy';
+import { findingUrl, investigationUrl, type Tool } from '../lib/content';
+import { getEntry } from 'astro:content';
 
 interface Props {
   tool: Tool;
@@ -14,6 +16,13 @@ interface Props {
 const { tool } = Astro.props;
 const { data } = tool;
 const available = data.status === 'available';
+const area = getTopic(data.area);
+const visible = <T extends { data: { draft: boolean } }>(e: T | undefined) =>
+  e && (import.meta.env.DEV || !e.data.draft) ? e : undefined;
+const investigation = visible(
+  data.investigation ? await getEntry(data.investigation) : undefined
+);
+const finding = visible(data.finding ? await getEntry(data.finding) : undefined);
 ---
 
 <Layout
@@ -26,7 +35,7 @@ const available = data.status === 'available';
     <div class="container-site relative py-12 sm:py-16">
       <Breadcrumbs items={[{ label: 'Tools', href: '/tools' }, { label: data.title }]} />
       <div class="flex flex-wrap items-center gap-3">
-        <span class="kicker">{data.category}</span>
+        <span class="kicker">{data.kind} · {area?.label ?? data.category}</span>
         {
           available ? (
             <Badge tone="blue">Available</Badge>
@@ -80,14 +89,53 @@ const available = data.status === 'available';
       )
     }
 
-    <div class="mt-12 max-w-3xl">
-      <p class="text-sm leading-relaxed text-subtle">
-        Tools on this site are experiments in helping people recognise and
-        resist real risks. They are educational, not a replacement for a
+    <section class="mt-12 max-w-3xl rounded-xl border border-line bg-surface p-6" aria-labelledby="origin-heading">
+      <h2 id="origin-heading" class="text-base font-semibold text-white">Why this was built</h2>
+      <dl class="mt-4 space-y-3 text-sm">
+        {
+          area && (
+            <div class="flex flex-wrap gap-x-2">
+              <dt class="text-subtle">Area of inquiry:</dt>
+              <dd>
+                <a href={`/topics/${area.slug}`} class="link">{area.label}</a>
+              </dd>
+            </div>
+          )
+        }
+        {
+          investigation && (
+            <div class="flex flex-wrap gap-x-2">
+              <dt class="text-subtle">Prompted by the investigation:</dt>
+              <dd>
+                <a href={investigationUrl(investigation)} class="link">
+                  {investigation.data.title}
+                </a>
+              </dd>
+            </div>
+          )
+        }
+        {
+          finding && (
+            <div class="flex flex-wrap gap-x-2">
+              <dt class="text-subtle">Tests the finding:</dt>
+              <dd>
+                <a href={findingUrl(finding)} class="link">{finding.data.title}</a>
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+      <p class="mt-4 text-sm leading-relaxed text-muted">
+        {
+          investigation || finding
+            ? 'It exists to examine a question the research raised, not to demonstrate a technique.'
+            : 'It starts from a question on the research agenda. It is not yet linked to a published investigation; when one gives it a sharper purpose, the link will appear here.'
+        }{' '}
+        Tools are educational and experimental, not a replacement for a
         professional security assessment, and each one explains how it handles
         anything you enter.
       </p>
-    </div>
+    </section>
     <div class="mt-8 max-w-3xl">
       <Disclaimer variant="compact" />
     </div>

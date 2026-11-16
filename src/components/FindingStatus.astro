@@ -1,0 +1,19 @@
+---
+import Badge from './Badge.astro';
+import type { Finding } from '../lib/content';
+
+interface Props {
+  status: Finding['data']['status'];
+}
+
+const STATUS = {
+  emerging: { label: 'Emerging pattern', tone: 'amber' },
+  supported: { label: 'Supported', tone: 'blue' },
+  contested: { label: 'Contested', tone: 'neutral' },
+  revised: { label: 'Revised', tone: 'neutral' },
+} as const;
+
+const { label, tone } = STATUS[Astro.props.status];
+---
+
+<Badge tone={tone}>{label}</Badge>

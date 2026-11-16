@@ -3,6 +3,7 @@ title: 'When Trust Becomes an Attack Surface'
 description: 'A reported case involving NVIDIA CEO Jensen Huang shows how social engineering targets people, not systems, and why AI makes that deception harder to recognize.'
 question: 'What happens when personal trust intersects with access to sensitive information?'
 pubDate: 2026-11-14
+format: brief
 topic: human-vulnerability
 categories: ['social-engineering', 'security-awareness']
 tags: ['social-engineering', 'insider-risk', 'espionage', 'deception']

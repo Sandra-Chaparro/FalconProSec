@@ -1,6 +1,7 @@
 ---
 import Badge from './Badge.astro';
 import Icon, { type IconName } from './Icon.astro';
+import { getTopic } from '../data/taxonomy';
 import type { Tool } from '../lib/content';
 
 interface Props {
@@ -13,6 +14,7 @@ const { data } = tool;
 const Heading = headingLevel;
 const available = data.status === 'available';
 const icon = data.icon as IconName;
+const area = getTopic(data.area);
 ---
 
 <article
@@ -38,7 +40,7 @@ const icon = data.icon as IconName;
       )
     }
   </div>
-  <p class="kicker mt-5">{data.category}</p>
+  <p class="kicker mt-5">{data.kind} · {area?.label ?? data.category}</p>
   <Heading class="mt-1.5 text-lg font-semibold">
     <a
       href={`/tools/${tool.id}`}
@@ -48,6 +50,14 @@ const icon = data.icon as IconName;
     </a>
   </Heading>
   <p class="mt-2 text-sm leading-relaxed text-muted">{data.summary}</p>
+  {
+    data.question && (
+      <p class="mt-4 border-l-2 border-line-strong pl-3 text-sm leading-relaxed text-fg">
+        <span class="sr-only">Question behind it: </span>
+        {data.question}
+      </p>
+    )
+  }
   <p
     class:list={[
       'mt-auto pt-5 text-sm font-medium',

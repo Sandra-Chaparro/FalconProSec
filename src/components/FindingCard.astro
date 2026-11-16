@@ -1,0 +1,33 @@
+---
+import ArticleMeta from './ArticleMeta.astro';
+import FindingStatus from './FindingStatus.astro';
+import { findingUrl, type Finding } from '../lib/content';
+
+interface Props {
+  item: Finding;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { item, headingLevel = 'h3' } = Astro.props;
+const { data } = item;
+const Heading = headingLevel;
+const count = data.investigations.length;
+---
+
+<article class="card-interactive relative flex h-full flex-col p-6">
+  <div class="flex flex-wrap items-center gap-3">
+    <FindingStatus status={data.status} />
+    <ArticleMeta pubDate={data.pubDate} draft={data.draft} />
+  </div>
+  <Heading class="mt-4 text-lg leading-snug font-semibold">
+    <a href={findingUrl(item)} class="stretched-link hover:text-primary-text">
+      {data.title}
+    </a>
+  </Heading>
+  <p class="mt-3 border-l-2 border-primary pl-3 text-sm leading-relaxed text-fg">
+    {data.statement}
+  </p>
+  <p class="mt-auto pt-5 font-mono text-xs text-subtle">
+    Based on {count} {count === 1 ? 'investigation' : 'investigations'}
+  </p>
+</article>

@@ -13,52 +13,75 @@ export interface Term {
   signal?: string;
 }
 
+export interface ResearchArea extends Term {
+  /** The central question this area of inquiry is trying to understand. */
+  inquiry: string;
+  /** Disciplines this area tends to draw on. Indicative, not exhaustive. */
+  disciplines: readonly string[];
+}
+
 /**
- * Areas of investigation. These are human problems, not career tracks:
- * each one draws on whatever discipline the question needs.
+ * Areas of inquiry. These are human problems, not service lines or career
+ * tracks: each one draws on whatever disciplines the question needs, and the
+ * boundaries are expected to shift as investigations reveal connections.
  */
 export const TOPICS = [
   {
     slug: 'human-vulnerability',
     signal: "ai scams that already know your name",
     label: 'Human Vulnerability',
+    inquiry:
+      'Why do some people, in some moments, become easier to deceive, pressure or exploit, and how does technology change who is exposed?',
     description:
-      'AI-powered scams, impersonation, social engineering and manipulation, and why some people are more exposed than others.',
+      'Scams, impersonation, social engineering and manipulation, studied as an interaction between a technique and the circumstances of the person it reaches.',
+    disciplines: ['Cybersecurity', 'Psychology', 'Behavioral science'],
     icon: 'users',
   },
   {
     slug: 'trust-identity',
     signal: "cloned voices begging for money",
     label: 'Trust & Identity',
+    inquiry:
+      'How do people decide what, and who, is real when voices, faces, documents and messages can be generated?',
     description:
-      'Deepfakes, synthetic identities, authentication and misinformation: how we decide what, and who, to trust.',
+      'Deepfakes, synthetic identities, authentication and misinformation: the signals people rely on to establish trust, and what happens when those signals can be imitated.',
+    disciplines: ['AI', 'Cybersecurity', 'Psychology'],
     icon: 'key',
   },
   {
     slug: 'ai-decision-making',
     signal: "algorithms deciding who gets a chance",
     label: 'AI & Human Decision-Making',
+    inquiry:
+      'What happens to judgement, accountability and recourse when automated systems shape decisions about people?',
     description:
-      'Automated decisions, bias, accountability and explainability, and the people on the receiving end.',
+      'Automated decisions, bias, over-reliance and explainability, examined from the side of the people those decisions are made about.',
+    disciplines: ['AI', 'Software engineering', 'Behavioral science'],
     icon: 'spark',
   },
   {
     slug: 'human-connections',
     signal: "ai companions built to keep you hooked",
     label: 'Human Connection',
+    inquiry:
+      'How do systems designed for companionship and attention affect dependency, wellbeing and influence?',
     description:
-      'AI companionship, emotional dependency and digital wellbeing as technology becomes more personal.',
+      'AI companions, emotionally responsive systems and digital relationships, and where support ends and manipulation begins.',
+    disciplines: ['AI', 'Psychology', 'Software engineering'],
     icon: 'message',
   },
   {
     slug: 'human-safety',
     signal: "the systems your life quietly depends on",
     label: 'Human Safety',
+    inquiry:
+      'How do security failures in essential systems turn into consequences for the people who depend on them?',
     description:
-      'Security risks in the systems people depend on: healthcare, schools, finance and public services.',
+      'Healthcare, education, finance and public services: the human side of security failures in systems people cannot easily avoid.',
+    disciplines: ['Cybersecurity', 'Software engineering', 'Behavioral science'],
     icon: 'shield',
   },
-] as const satisfies readonly Term[];
+] as const satisfies readonly ResearchArea[];
 
 export const SECTIONS = {
   'security-privacy': {
@@ -193,8 +216,8 @@ export function findCategory(
   return undefined;
 }
 
-export function getTopic(slug: string): Term | undefined {
-  return TOPICS.find((t) => t.slug === slug);
+export function getTopic(slug: string): ResearchArea | undefined {
+  return (TOPICS as readonly ResearchArea[]).find((t) => t.slug === slug);
 }
 
 export function getCategory(
@@ -204,40 +227,90 @@ export function getCategory(
   return SECTIONS[section].categories.find((c) => c.slug === slug);
 }
 
+export type QuestionStatus = 'open' | 'investigating';
+
+export interface ResearchQuestion {
+  question: string;
+  /** Areas of inquiry the question belongs to. The first is the primary one. */
+  areas: TopicSlug[];
+  status: QuestionStatus;
+  /** Ids of investigations that address this question, fully or in part. */
+  investigations?: string[];
+}
+
 /**
- * Questions planned for investigation, grouped by area. Not completed work.
+ * The research agenda: questions currently being explored. Most are open.
+ * When an investigation takes one on, set status to 'investigating' and
+ * list the investigation id.
  */
-export const OPEN_QUESTIONS: { area: TopicSlug; question: string }[] = [
+export const RESEARCH_QUESTIONS: ResearchQuestion[] = [
   {
-    area: 'human-vulnerability',
+    question: 'How can personal trust and relationships become a path to sensitive information, and can the person involved tell when it is happening?',
+    areas: ['human-vulnerability', 'trust-identity'],
+    status: 'investigating',
+    investigations: ['when-trust-becomes-an-attack-surface'],
+  },
+  {
+    question: 'How does AI change the way people establish trust in a voice, a face or a message?',
+    areas: ['trust-identity'],
+    status: 'open',
+  },
+  {
+    question: 'What evidence remains useful when identities, voices, images and communications can be artificially generated?',
+    areas: ['trust-identity'],
+    status: 'open',
+  },
+  {
+    question: 'How should people reason about authenticity when technology can convincingly imitate someone they know?',
+    areas: ['trust-identity', 'human-vulnerability'],
+    status: 'open',
+  },
+  {
+    question: 'Why are some technology-enabled scams persuasive even to technically knowledgeable people?',
+    areas: ['human-vulnerability'],
+    status: 'open',
+  },
+  {
     question: 'How does AI change the economics of a scam when a convincing message costs almost nothing to produce?',
+    areas: ['human-vulnerability'],
+    status: 'open',
   },
   {
-    area: 'human-vulnerability',
-    question: 'How do scammers build profiles of potential victims from public information?',
+    question: 'When does a cybersecurity problem actually become a human behavior problem?',
+    areas: ['human-vulnerability', 'human-safety'],
+    status: 'open',
   },
   {
-    area: 'trust-identity',
-    question: 'If a voice can be cloned from a short clip, what should a family or a help desk use to verify who is calling?',
+    question: 'How do psychological factors interact with technical security controls, and when do controls fail because of how people actually behave?',
+    areas: ['human-safety', 'human-vulnerability'],
+    status: 'open',
   },
   {
-    area: 'trust-identity',
-    question: 'What can an ordinary person realistically check to tell whether an image or video is authentic?',
-  },
-  {
-    area: 'ai-decision-making',
-    question: 'When an automated system makes a decision about someone, what would they need in order to understand or challenge it?',
-  },
-  {
-    area: 'human-connections',
-    question: 'What design choices make an AI companion supportive, and which ones make it manipulative?',
-  },
-  {
-    area: 'human-vulnerability',
     question: 'Which security practices quietly assume a level of access, language or ability that many people do not have?',
+    areas: ['human-safety'],
+    status: 'open',
   },
   {
-    area: 'human-safety',
-    question: 'What actually happens to patients, students or citizens after a data breach at a service they cannot opt out of?',
+    question: 'When an automated system makes a decision about someone, what would they need in order to understand or challenge it?',
+    areas: ['ai-decision-making'],
+    status: 'open',
+  },
+  {
+    question: 'What design choices make an AI companion supportive, and which ones make it manipulative?',
+    areas: ['human-connections'],
+    status: 'open',
+  },
+  {
+    question: 'What happens to the people who rely on a public service after a security failure they had no way to opt out of?',
+    areas: ['human-safety'],
+    status: 'open',
   },
 ];
+
+export function questionsForArea(area: TopicSlug): ResearchQuestion[] {
+  return RESEARCH_QUESTIONS.filter((q) => q.areas.includes(area));
+}
+
+export function questionsForInvestigation(id: string): ResearchQuestion[] {
+  return RESEARCH_QUESTIONS.filter((q) => q.investigations?.includes(id));
+}

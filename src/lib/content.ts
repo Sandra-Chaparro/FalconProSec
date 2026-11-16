@@ -3,6 +3,7 @@ import { sectionCategorySlugs, type SectionSlug } from '../data/taxonomy';
 
 export type Investigation = CollectionEntry<'investigations'>;
 export type Article = CollectionEntry<'articles'>;
+export type Finding = CollectionEntry<'findings'>;
 export type Tool = CollectionEntry<'tools'>;
 
 /** Drafts are visible while running `npm run dev`, never in a production build. */
@@ -19,6 +20,30 @@ export async function getInvestigations(): Promise<Investigation[]> {
     ({ data }) => showDrafts || !data.draft
   );
   return entries.sort(byNewest);
+}
+
+export async function getFindings(): Promise<Finding[]> {
+  const entries = await getCollection(
+    'findings',
+    ({ data }) => showDrafts || !data.draft
+  );
+  return entries.sort(byNewest);
+}
+
+export function findingUrl(item: Finding): string {
+  return `/findings/${item.id}`;
+}
+
+/** Findings that draw on a given investigation. */
+export async function findingsForInvestigation(id: string): Promise<Finding[]> {
+  return (await getFindings()).filter((f) =>
+    f.data.investigations.some((ref) => ref.id === id)
+  );
+}
+
+/** Tools that an investigation created a reason to build. */
+export async function toolsForInvestigation(id: string): Promise<Tool[]> {
+  return (await getTools()).filter((t) => t.data.investigation?.id === id);
 }
 
 /** Investigations tagged with any category from this section. */
@@ -64,6 +89,11 @@ export function articleSlug(article: Article): string {
 
 export function articleUrl(article: Article): string {
   return `/${article.data.section}/${articleSlug(article)}`;
+}
+
+/** "Brief" or "Investigation", for labels. */
+export function formatLabel(item: Investigation): 'Brief' | 'Investigation' {
+  return item.data.format === 'brief' ? 'Brief' : 'Investigation';
 }
 
 export function investigationUrl(item: Investigation): string {

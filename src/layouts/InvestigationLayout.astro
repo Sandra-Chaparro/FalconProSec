@@ -5,6 +5,7 @@ import Layout from './Layout.astro';
 import ArticleMeta from '../components/ArticleMeta.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import CategoryList from '../components/CategoryList.astro';
+import ResearchConnections from '../components/ResearchConnections.astro';
 import CorrectionsLog from '../components/CorrectionsLog.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import InvestigationCard from '../components/InvestigationCard.astro';
@@ -14,7 +15,7 @@ import TableOfContents from '../components/TableOfContents.astro';
 import TagList from '../components/TagList.astro';
 import { SITE } from '../config/site';
 import { findCategory, getTopic } from '../data/taxonomy';
-import { readingTime, type Investigation } from '../lib/content';
+import { formatLabel, readingTime, type Investigation } from '../lib/content';
 import { articleJsonLd } from '../lib/seo';
 
 interface Props {
@@ -26,6 +27,7 @@ interface Props {
 const { entry, headings, related } = Astro.props;
 const { data } = entry;
 const topic = getTopic(data.topic);
+const format = formatLabel(entry);
 ---
 
 <Layout
@@ -62,7 +64,7 @@ const topic = getTopic(data.topic);
           ]}
         />
         <ArticleMeta
-          label={`Investigation · ${topic?.label ?? data.topic}`}
+          label={`${format} · ${topic?.label ?? data.topic}`}
           labelHref={`/investigations/topic/${data.topic}`}
           pubDate={data.pubDate}
           updatedDate={data.updatedDate}
@@ -77,7 +79,17 @@ const topic = getTopic(data.topic);
         </p>
         <CategoryList categories={data.categories} linked class="mt-6" />
         <div class="mt-8 max-w-3xl">
-          <InvestigationQuestion label="The question behind this investigation" question={data.question} />
+          <InvestigationQuestion label={`The question behind this ${format.toLowerCase()}`} question={data.question} />
+          {
+            data.format === 'brief' && (
+              <p class="mt-4 text-sm leading-relaxed text-subtle">
+                A brief is a short analysis of a public case, based on
+                published reporting, that frames a question for future
+                investigation. It does not present new evidence.{' '}
+                <a href="/methods#formats-heading" class="link">About briefs and investigations</a>
+              </p>
+            )
+          }
         </div>
       </div>
     </header>
@@ -106,6 +118,11 @@ const topic = getTopic(data.topic);
         </div>
 
         <div class="mt-14 space-y-10">
+          <ResearchConnections
+            id={entry.id}
+            topic={data.topic}
+            topicLabel={topic?.label ?? data.topic}
+          />
           <CorrectionsLog corrections={data.corrections} />
           <SourcesList sources={data.sources} />
           <TagList tags={data.tags} />
@@ -115,6 +132,7 @@ const topic = getTopic(data.topic);
       <aside class="hidden lg:block">
         <div class="sticky top-24 space-y-8">
           <TableOfContents headings={headings} numbered />
+          <a href="/methods" class="link block text-sm">How investigations work</a>
           <a href="/contact?reason=correction" class="link block text-sm">
             Suggest a correction
           </a>

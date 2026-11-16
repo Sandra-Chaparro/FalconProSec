@@ -1,0 +1,77 @@
+---
+/**
+ * Shows how an investigation connects to the rest of the research: the
+ * agenda questions it takes on, findings that draw on it, and tools it led to.
+ */
+import { questionsForInvestigation } from '../data/taxonomy';
+import {
+  findingUrl,
+  findingsForInvestigation,
+  toolsForInvestigation,
+} from '../lib/content';
+
+interface Props {
+  id: string;
+  topic: string;
+  topicLabel: string;
+}
+
+const { id, topic, topicLabel } = Astro.props;
+const [findings, tools] = await Promise.all([
+  findingsForInvestigation(id),
+  toolsForInvestigation(id),
+]);
+const questions = questionsForInvestigation(id);
+---
+
+<section class="rounded-xl border border-line bg-surface p-6 sm:p-8" aria-labelledby="connections-heading">
+  <h2 id="connections-heading" class="text-xl font-semibold">Where this fits in the research</h2>
+  <dl class="mt-6 grid gap-6 sm:grid-cols-2">
+    <div>
+      <dt class="kicker">Area of inquiry</dt>
+      <dd class="mt-2">
+        <a href={`/topics/${topic}`} class="link">{topicLabel}</a>
+      </dd>
+    </div>
+    {
+      questions.length > 0 && (
+        <div>
+          <dt class="kicker">Research question</dt>
+          {questions.map((q) => (
+            <dd class="mt-2 text-fg">{q.question}</dd>
+          ))}
+        </div>
+      )
+    }
+    <div>
+      <dt class="kicker">Findings</dt>
+      {
+        findings.length > 0 ? (
+          findings.map((f) => (
+            <dd class="mt-2">
+              <a href={findingUrl(f)} class="link">{f.data.title}</a>
+            </dd>
+          ))
+        ) : (
+          <dd class="mt-2 text-sm text-muted">
+            Not yet part of a published finding. Findings are written when
+            several investigations point the same way.{' '}
+            <a href="/findings" class="link">About findings</a>
+          </dd>
+        )
+      }
+    </div>
+    {
+      tools.length > 0 && (
+        <div>
+          <dt class="kicker">Tools built from this</dt>
+          {tools.map((t) => (
+            <dd class="mt-2">
+              <a href={`/tools/${t.id}`} class="link">{t.data.title}</a>
+            </dd>
+          ))}
+        </div>
+      )
+    }
+  </dl>
+</section>

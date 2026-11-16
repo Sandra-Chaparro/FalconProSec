@@ -1,98 +1,97 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CTASection from '../components/CTASection.astro';
+import KnowledgeLoop from '../components/KnowledgeLoop.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { SITE } from '../config/site';
 import { TOPICS } from '../data/taxonomy';
 
-const method = [
-  {
-    step: 'Question',
-    text: 'Start from a specific question about how technology affects people, not from a tool or a technique.',
-  },
-  {
-    step: 'Evidence',
-    text: 'Gather what can be documented: public sources, research, and data from controlled environments.',
-  },
-  {
-    step: 'Analysis',
-    text: 'Work out what the evidence supports, and say clearly what remains uncertain.',
-  },
-  {
-    step: 'Experiment',
-    text: 'Where it helps, build or test something to see how the problem behaves in practice.',
-  },
-  {
-    step: 'Insight',
-    text: 'Explain what I learned and why it matters to the people affected.',
-  },
+const trajectory = [
+  { stage: 'Independent investigation', now: true },
+  { stage: 'Accumulated findings' },
+  { stage: 'A tested research method' },
+  { stage: 'Experiments and tools' },
+  { stage: 'Collaboration' },
+  { stage: 'Multidisciplinary research' },
 ];
 ---
 
 <Layout
   title="About"
-  description="Why FalconProSec exists: a software engineer investigating how technology and AI affect human trust, safety, identity and opportunity."
+  description="Why FalconProSec exists, what it investigates, how it works, and where it is heading: an independent research initiative on technology, cybersecurity, AI and human behavior."
 >
   <PageHeader
     kicker="About"
-    title="Technology is a tool. Human impact is the reason."
-    description={`${SITE.name} is my research and experimentation space for the problems emerging where software, AI, cybersecurity and human behavior meet.`}
+    title="Technology is changing how people trust, decide and protect themselves."
+    description={`${SITE.name} is an independent research initiative investigating problems at the intersection of technology, cybersecurity, AI and human behavior, with the people affected at the center.`}
   />
 
   <div class="container-site mt-16 space-y-20">
-    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="who">
-      <h2 id="who" class="text-2xl font-semibold sm:text-3xl">
-        Where I'm coming from
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="why">
+      <h2 id="why" class="text-2xl font-semibold sm:text-3xl">
+        Why it exists
       </h2>
       <div class="space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          I'm Sandra. My background is in computer science and software
-          engineering, so I understand technology from the side of the people
-          who build it: the decisions, the trade-offs, and the shortcuts that
-          seem harmless at the time.
-        </p>
-        <p>
-          Over time I became more interested in the other side: what happens
-          when that technology reaches real people. That is why I'm expanding
-          into cybersecurity, AI, investigation and security research. I'm not
-          trying to collect specialties. I'm following a problem, and these are
-          the tools it needs.
+          FalconProSec exists to understand how technological progress changes 
+          the way people live, make decisions, trust one another, and experience risk. An
+          automated decision is a piece of software and a
+          consequence in someone's life. Understanding these problems takes
+          more than one discipline, and often the right one is not obvious at
+          the start.
         </p>
       </div>
     </section>
 
-    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="why">
-      <h2 id="why" class="text-2xl font-semibold sm:text-3xl">
-        Why human impact
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="what">
+      <h2 id="what" class="text-2xl font-semibold sm:text-3xl">
+        What it does
       </h2>
       <div class="space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          Most software is built to solve a customer's problem. I want to solve
-          human problems: the ones that show up when a scam sounds exactly like
-          a family member, when an automated system makes a decision nobody can
-          explain, or when a hospital or school loses access to its own
-          systems.
+          {SITE.name} investigates specific questions where technology,
+          cybersecurity, AI, human behavior, trust and safety meet. Each
+          investigation asks who is affected, how, and why the technology makes
+          it possible, and ends with what remains unknown.
         </p>
         <p>
-          As AI gets more capable, it can generate convincing voices, faces,
-          messages and evidence, which makes human trust both harder to protect
-          and more worth protecting. The same technology could also make
-          education, accessibility and protection available to far more
-          people. I want to understand both sides, ideally before the problems
-          become impossible to ignore.
+          The aim is not to publish for the sake of publishing. Each
+          investigation should add to a body of knowledge: findings that hold
+          up across cases, patterns that recur, and better questions for the
+          next investigation.
         </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="how">
+      <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr]">
+        <h2 id="how" class="text-2xl font-semibold sm:text-3xl">
+          How it works
+        </h2>
+        <div class="space-y-4 text-lg leading-relaxed text-muted">
+          <p>
+            Investigations follow evidence, examine technical and human
+            factors together, and document findings separately from
+            interpretation. Where it helps, something is built or tested to
+            see whether an explanation holds.
+          </p>
+          <a href="/methods" class="link inline-block text-base">Read the full method</a>
+        </div>
+      </div>
+      <div class="mt-8">
+        <KnowledgeLoop />
       </div>
     </section>
 
     <section aria-labelledby="areas">
       <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr]">
         <h2 id="areas" class="text-2xl font-semibold sm:text-3xl">
-          What I investigate
+          Areas of inquiry
         </h2>
         <p class="text-lg leading-relaxed text-muted">
-          My work is organized around problems, not job titles. These six areas
-          are not career tracks. They're questions I keep returning to, and
-          some of them don't fit neatly into any existing role.
+          The work is organised around problems, not specialties. These five
+          areas overlap, and they are expected to change as investigations
+          reveal connections between them.
         </p>
       </div>
       <ul class="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
@@ -102,53 +101,98 @@ const method = [
               <a href={`/topics/${t.slug}`} class="font-heading font-semibold text-white hover:text-primary-text">
                 {t.label}
               </a>
-              <p class="mt-2 text-sm leading-relaxed text-muted">{t.description}</p>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{t.inquiry}</p>
             </li>
           ))
         }
+        <li class="bg-ink p-6">
+          <a href="/research" class="font-heading font-semibold text-primary-text hover:text-white">
+            The research agenda →
+          </a>
+          <p class="mt-2 text-sm leading-relaxed text-muted">
+            The specific questions currently being explored in each area.
+          </p>
+        </li>
       </ul>
     </section>
 
-    <section aria-labelledby="method">
-      <p class="kicker !text-primary-text">The approach</p>
-      <h2 id="method" class="mt-3 text-2xl font-semibold sm:text-3xl">
-        How I investigate
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="today">
+      <h2 id="today" class="text-2xl font-semibold sm:text-3xl">
+        Where it stands today
       </h2>
-      <p class="mt-3 max-w-2xl text-muted">
-        These are not answers I already have. They're questions I'm willing to
-        investigate, in the open.
-      </p>
-      <ol class="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+      <div class="space-y-4 text-lg leading-relaxed text-muted">
+        <p>
+          {SITE.name} is at an early stage. It is an independent initiative
+          run by one person, with no institutional affiliation, no team, and
+          no clients. It does not offer professional security services.
+        </p>
+        <p>
+          Its credibility has to come from the work itself: the quality of the
+          questions, the care taken with evidence, and whether the
+          investigations build on each other over time. Where something has not
+          yet been demonstrated, the site says so.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="direction">
+      <div class="grid gap-10 lg:grid-cols-[1fr_1.6fr]">
+        <h2 id="direction" class="text-2xl font-semibold sm:text-3xl">
+          What it may become
+        </h2>
+        <div class="space-y-4 text-lg leading-relaxed text-muted">
+          <p>
+            The long-term direction is a multidisciplinary research
+            organisation, where people from cybersecurity, engineering, AI,
+            psychology, behavioral science and other fields work together on
+            problems none of them could fully understand alone.
+          </p>
+          <p>
+            That is a direction, not a claim. If it happens, it should grow out
+            of the research: findings that justify a method, a method that
+            invites collaboration, collaboration that needs structure.
+          </p>
+        </div>
+      </div>
+      <ol class="mt-8 flex flex-wrap items-center gap-x-2 gap-y-3 font-mono text-xs tracking-wide uppercase" aria-label="Path of development">
         {
-          method.map((m, i) => (
-            <li class="bg-ink p-6">
-              <span class="font-mono text-sm text-primary-text">
-                {String(i + 1).padStart(2, '0')}
+          trajectory.map((t, i) => (
+            <li class="flex items-center gap-2">
+              {i > 0 && <span class="text-subtle" aria-hidden="true">→</span>}
+              <span
+                class:list={[
+                  'rounded-full border px-3 py-1.5',
+                  t.now
+                    ? 'border-primary bg-primary/15 text-white'
+                    : 'border-line text-subtle',
+                ]}
+              >
+                {t.stage}
+                {t.now && <span class="ml-2 text-primary-text">· Now</span>}
               </span>
-              <p class="mt-3 font-heading font-semibold text-white">{m.step}</p>
-              <p class="mt-2 text-sm leading-relaxed text-muted">{m.text}</p>
             </li>
           ))
         }
       </ol>
     </section>
 
-    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="what-it-is">
-      <h2 id="what-it-is" class="text-2xl font-semibold sm:text-3xl">
-        What this is, and isn't
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="who">
+      <h2 id="who" class="text-2xl font-semibold sm:text-3xl">
+        Who is behind it
       </h2>
       <div class="space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          {SITE.name} is a personal, independent space. It is not a security
-          company and does not offer professional services. I'm not claiming
-          to be an expert in AI security, cybersecurity or psychology. I'm
-          building the technical and investigative ability to work on these
-          problems, and showing that work as I go.
+          Hello! I'm Sandra. My background is in computer science, so I
+          understand technology from the side of the people who build it: the
+          decisions, the trade-offs, and the shortcuts that seem harmless at
+          the time.
         </p>
         <p>
-          Expect questions, experiments, sources you can check yourself, and an
-          honest account of what I learned, including when the answer is
-          "it's complicated".
+          I started {SITE.name} because I kept arriving at questions about what
+          happens when that technology reaches people, and those questions did
+          not belong to any single field. I'm not claiming expertise in every
+          discipline the work touches. I'm following the problems, learning
+          what they require, and showing the work as it develops.
         </p>
       </div>
     </section>
@@ -159,9 +203,9 @@ const method = [
       </h2>
       <div class="space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          Mistakes happen. When I find an error in an investigation or article,
-          I correct it on the page and note it in a visible “Corrections &
-          updates” section with the date, rather than changing it silently.
+          When an error is found in an investigation or finding, it is
+          corrected on the page and noted in a visible “Corrections & updates”
+          section with the date, rather than changed silently.
         </p>
         <p>
           If you notice something wrong or have more context,
@@ -172,7 +216,7 @@ const method = [
 
     <CTASection
       title="Start with a question"
-      description="Read what I'm investigating, or suggest a question about technology and people that deserves a closer look."
+      description="Read the current investigations, or suggest a question about technology and people that deserves a closer look."
       primary={{ href: '/investigations', label: 'Explore Investigations' }}
       secondary={{ href: '/contact?reason=investigation', label: 'Suggest a question' }}
     />

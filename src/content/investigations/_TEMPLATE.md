@@ -5,6 +5,9 @@
 title: 'Investigation title'
 description: 'One or two sentences summarising the investigation for cards, search results and social previews.'
 question: 'The specific question this investigation answers?'
+# investigation = original work (evidence across sources, analysis, testing)
+# brief         = short analysis of a public case from published reporting
+format: investigation
 pubDate: 2026-01-01
 # updatedDate: 2026-01-15
 # topic: human-vulnerability | trust-identity | ai-decision-making | human-connections | human-safety
@@ -29,17 +32,33 @@ corrections: []
 #     note: 'Describe what was corrected and why.'
 ---
 
+<!--
+Not every heading is needed every time; leave out what does not apply. Keep
+the human questions, though: who is affected, how, and what could reduce it.
+Label interpretation and hypothesis as such. Do not present them as fact.
+-->
+
 ## Why this question matters
 
-Why this question matters, who it affects, and the context a reader needs.
+The context a reader needs, and why the question is worth asking now.
+
+## Who can be affected, and how
+
+The people exposed to this problem, how it reaches them, and why some are more exposed than others.
 
 ## Evidence
 
-What was examined and how. Link every claim to a source.
+What was examined and how. Link every factual claim to a source.
 
 ## Analysis
 
-What the evidence supports. Be explicit about what is confirmed and what is uncertain.
+Look at the problem from each perspective it needs:
+
+- **Technology:** what makes the problem possible.
+- **Human behavior:** what people do, or are led to do, and why.
+- **Assumptions exploited:** what trust, habit or vulnerability is being relied on.
+
+Be explicit about what is confirmed, what is interpretation, and what is uncertain.
 
 ## Experiment
 
@@ -47,8 +66,12 @@ What was built, tested or simulated to see the problem in practice (a controlled
 
 ## Insight
 
-What was learned, including what was surprising and what remains unknown.
+What was learned, including what was surprising.
 
-## Why it matters to people
+## What could reduce the risk
 
-What this means for the people affected, and what they or others can realistically do.
+What people, organisations or designers could realistically do, and the limits of each option.
+
+## What remains unknown
+
+The questions this investigation leaves open. These feed the research agenda and future investigations.

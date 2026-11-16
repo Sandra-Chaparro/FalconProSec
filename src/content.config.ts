@@ -1,4 +1,4 @@
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { z } from 'astro/zod';
 import { file, glob } from 'astro/loaders';
 import {
@@ -38,6 +38,12 @@ const investigations = defineCollection({
         title: z.string(),
         description: z.string(),
         question: z.string(),
+        /**
+         * investigation: original work (new evidence, analysis across sources,
+         * testing). brief: a short analysis of a public case based on
+         * published reporting, framing a question for future investigation.
+         */
+        format: z.enum(['investigation', 'brief']).default('investigation'),
         pubDate: z.coerce.date(),
         updatedDate: z.coerce.date().optional(),
         topic: z.enum(TOPIC_SLUGS),
@@ -53,6 +59,36 @@ const investigations = defineCollection({
         corrections: z.array(correction).default([]),
       })
       .refine(heroAltRequired, heroAltMessage),
+});
+
+/**
+ * Findings: conclusions or recurring observations that emerge across
+ * investigations. Each one links back to the investigations it rests on and
+ * states how well supported it is.
+ */
+const findings = defineCollection({
+  loader: glob({ pattern: MARKDOWN, base: './src/content/findings' }),
+  schema: z.object({
+    title: z.string(),
+    /** The finding itself, in one or two plain sentences. */
+    statement: z.string(),
+    description: z.string(),
+    /**
+     * emerging: a pattern seen more than once, not yet well supported.
+     * supported: consistent evidence across investigations.
+     * contested: evidence points in different directions.
+     * revised: an earlier version was changed by new evidence.
+     */
+    status: z.enum(['emerging', 'supported', 'contested', 'revised']),
+    areas: z.array(z.enum(TOPIC_SLUGS)).min(1),
+    investigations: z.array(reference('investigations')).min(1),
+    openQuestions: z.array(z.string()).default([]),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+    sources: z.array(source).default([]),
+    corrections: z.array(correction).default([]),
+  }),
 });
 
 const articles = defineCollection({
@@ -94,10 +130,25 @@ const tools = defineCollection({
     summary: z.string(),
     question: z.string().optional(),
     category: z.string(),
+    /** What kind of instrument this is: why it was built, not what stack it uses. */
+    kind: z.enum([
+      'experiment',
+      'simulator',
+      'visualization',
+      'educational tool',
+      'detection concept',
+      'research prototype',
+      'analysis tool',
+    ]),
+    /** Area of inquiry the tool came out of. */
+    area: z.enum(TOPIC_SLUGS),
+    /** The investigation or finding that created a reason to build it, if any. */
+    investigation: reference('investigations').optional(),
+    finding: reference('findings').optional(),
     status: z.enum(['available', 'coming-soon']),
     icon: z.string().default('wrench'),
     featured: z.boolean().default(false),
   }),
 });
 
-export const collections = { investigations, articles, tools };
+export const collections = { investigations, findings, articles, tools };

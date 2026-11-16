@@ -1,17 +1,24 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Disclaimer from '../../components/Disclaimer.astro';
+import KnowledgeLoop from '../../components/KnowledgeLoop.astro';
+import ResearchQuestionList from '../../components/ResearchQuestionList.astro';
 import EmptyState from '../../components/EmptyState.astro';
 import InvestigationCard from '../../components/InvestigationCard.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
-import { OPEN_QUESTIONS, TOPICS, getTopic } from '../../data/taxonomy';
+import { RESEARCH_QUESTIONS, TOPICS } from '../../data/taxonomy';
 import { getInvestigations, pickFeatured } from '../../lib/content';
 
 const investigations = await getInvestigations();
 const lead = pickFeatured(investigations);
 const rest = investigations.filter((i) => i !== lead);
 const usedTopics = new Set(investigations.map((i) => i.data.topic));
+// A preview of the agenda: questions being investigated first, then open ones.
+const agenda = [
+  ...RESEARCH_QUESTIONS.filter((q) => q.status === 'investigating'),
+  ...RESEARCH_QUESTIONS.filter((q) => q.status === 'open'),
+].slice(0, 6);
 ---
 
 <Layout
@@ -21,25 +28,14 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
   <PageHeader
     kicker="Investigations"
     title="Questions, evidence, and what it means for people"
-    description="Open questions, not settled answers. Each investigation starts with a question about how technology affects people, works through the evidence, tests it where possible, and ends with what was learned and why it matters."
+    description="Each investigation takes one question about how technology affects people and follows the evidence: what is documented, what it suggests, what was tested, and what remains unknown. Briefs are shorter: an analysis of a public case that frames a question for a future investigation. Over time, both are meant to add up to findings."
   >
-    <ol
-      class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-wide text-subtle uppercase"
-      aria-label="Investigation method"
-    >
-      {
-        ['Question', 'Evidence', 'Analysis', 'Experiment', 'Insight'].map(
-          (step, i) => (
-            <li>
-              <span class="text-primary-text">
-                {String(i + 1).padStart(2, '0')}
-              </span>{' '}
-              {step}
-            </li>
-          )
-        )
-      }
-    </ol>
+    <div class="mt-8">
+      <KnowledgeLoop compact />
+    </div>
+    <p class="mt-4 text-sm">
+      <a href="/methods" class="link">How investigations are conducted</a>
+    </p>
   </PageHeader>
 
   <div class="container-site mt-12">
@@ -124,29 +120,12 @@ const usedTopics = new Set(investigations.map((i) => i.data.topic));
   <section class="container-site mt-24" aria-labelledby="open-questions">
     <SectionHeader
       id="open-questions"
-      kicker="On the list"
-      title="Questions worth investigating"
-      description="Open questions across the areas of investigation. These are not completed investigations, just problems worth understanding before they become impossible to ignore."
+      kicker="Research agenda"
+      title="What is being explored next"
+      description="Questions from the research agenda. Open questions have not been investigated yet; unresolved parts of each investigation are added here."
+      link={{ href: '/research#agenda-heading', label: 'Full research agenda' }}
     />
-    <ul class="grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-2">
-      {
-        OPEN_QUESTIONS.map((q) => (
-          <li class="flex gap-3 bg-ink p-5 text-fg">
-            <span class="font-mono text-primary-text" aria-hidden="true">
-              ?
-            </span>
-            <span>
-              <a href={`/topics/${q.area}`} class="kicker hover:text-primary-text">
-                {getTopic(q.area)?.label}
-              </a>
-              <span class="mt-1 block font-heading text-lg leading-snug">
-                {q.question}
-              </span>
-            </span>
-          </li>
-        ))
-      }
-    </ul>
+    <ResearchQuestionList questions={agenda} />
     <p class="mt-6 text-sm text-muted">
       Have another question in mind?{' '}
       <a href="/contact?reason=investigation" class="link">Suggest it</a>.

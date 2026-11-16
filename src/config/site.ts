@@ -5,9 +5,9 @@
 export const SITE = {
   name: 'FalconProSec',
   url: 'https://falconprosec.com',
-  tagline: 'Technology, security & human impact.',
+  tagline: 'Investigating technology and its human impact.',
   description:
-    'An independent research space investigating how technology and AI affect human trust, safety, identity and opportunity, and how they can be used to protect people.',
+    'An independent research initiative investigating problems at the intersection of technology, cybersecurity, AI and human behavior: what puts people at risk, why, and what can reduce it.',
   locale: 'en',
   ogImage: '/og-default.jpg',
   ogImageAlt: 'FalconProSec logo: a stylised falcon inside a shield outline',
@@ -18,9 +18,11 @@ export interface NavItem {
   href: string;
 }
 
+// The logo links home, so there is no separate Home item.
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/' },
+  { label: 'Research', href: '/research' },
   { label: 'Investigations', href: '/investigations' },
+  { label: 'Findings', href: '/findings' },
   { label: 'Tools', href: '/tools' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
@@ -28,9 +30,12 @@ export const NAV_ITEMS: NavItem[] = [
 
 export const FOOTER_LINKS: { heading: string; links: NavItem[] }[] = [
   {
-    heading: 'Explore',
+    heading: 'Research',
     links: [
+      { label: 'Areas & questions', href: '/research' },
       { label: 'Investigations', href: '/investigations' },
+      { label: 'Findings', href: '/findings' },
+      { label: 'Methods', href: '/methods' },
       { label: 'Tools', href: '/tools' },
     ],
   },

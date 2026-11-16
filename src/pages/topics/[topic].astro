@@ -2,11 +2,14 @@
 import Layout from '../../layouts/Layout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import EmptyState from '../../components/EmptyState.astro';
+import FindingCard from '../../components/FindingCard.astro';
+import InvestigationQuestion from '../../components/InvestigationQuestion.astro';
+import ResearchQuestionList from '../../components/ResearchQuestionList.astro';
 import InvestigationCard from '../../components/InvestigationCard.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
-import { TOPICS } from '../../data/taxonomy';
-import { getArticles, getInvestigations } from '../../lib/content';
+import { TOPICS, questionsForArea } from '../../data/taxonomy';
+import { getArticles, getFindings, getInvestigations } from '../../lib/content';
 
 export function getStaticPaths() {
   return TOPICS.map((topic) => ({
@@ -22,25 +25,48 @@ const investigations = (await getInvestigations()).filter(
 const articles = (await getArticles()).filter((a) =>
   a.data.topics.includes(topic.slug)
 );
+const findings = (await getFindings()).filter((f) =>
+  (f.data.areas as string[]).includes(topic.slug)
+);
+const questions = questionsForArea(topic.slug);
 const empty = investigations.length === 0 && articles.length === 0;
 ---
 
 <Layout
   title={topic.label}
-  description={`${topic.description} Investigations and articles on ${topic.label} at FalconProSec.`}
+  description={`${topic.inquiry} Research questions, investigations and findings on ${topic.label} at FalconProSec.`}
 >
   <PageHeader
-    kicker="Area of investigation"
+    kicker="Area of inquiry"
     title={topic.label}
     description={topic.description}
-    breadcrumbs={[{ label: 'Areas of investigation', href: '/about#areas' }, { label: topic.label }]}
-  />
+    breadcrumbs={[{ label: 'Research', href: '/research' }, { label: topic.label }]}
+  >
+    <div class="mt-8 max-w-3xl">
+      <InvestigationQuestion label="What this area is trying to understand" question={topic.inquiry} />
+    </div>
+    <p class="mt-6 font-mono text-xs text-subtle">
+      Draws on: {topic.disciplines.join(' · ')}
+    </p>
+  </PageHeader>
   <div class="container-site mt-12 space-y-16">
+    {
+      findings.length > 0 && (
+        <section aria-labelledby="findings-heading">
+          <SectionHeader id="findings-heading" title="Findings" />
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {findings.map((f) => (
+              <FindingCard item={f} />
+            ))}
+          </div>
+        </section>
+      )
+    }
     {
       empty ? (
         <EmptyState
-          title={`Nothing published on ${topic.label} yet`}
-          description="Investigations and articles in this area will be gathered here once they are published."
+          title={`No investigations in ${topic.label} yet`}
+          description="Investigations in this area will be gathered here once they are published. The questions below are what they are likely to start from."
           action={{
             href: '/contact?reason=investigation',
             label: 'Suggest a question to investigate',
@@ -69,6 +95,19 @@ const empty = investigations.length === 0 && articles.length === 0;
             </section>
           )}
         </>
+      )
+    }
+    {
+      questions.length > 0 && (
+        <section aria-labelledby="questions-heading">
+          <SectionHeader
+            id="questions-heading"
+            title="Questions being explored"
+            description="From the research agenda. Open questions have not been investigated yet."
+            link={{ href: '/research#agenda-heading', label: 'Full research agenda' }}
+          />
+          <ResearchQuestionList questions={questions} showArea={false} />
+        </section>
       )
     }
   </div>

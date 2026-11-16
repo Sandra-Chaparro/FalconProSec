@@ -1,0 +1,141 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Disclaimer from '../../components/Disclaimer.astro';
+import FindingCard from '../../components/FindingCard.astro';
+import Icon from '../../components/Icon.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { getFindings, getInvestigations } from '../../lib/content';
+
+const [findings, published] = await Promise.all([
+  getFindings(),
+  getInvestigations(),
+]);
+const fullCount = published.filter((i) => i.data.format === 'investigation').length;
+const briefCount = published.length - fullCount;
+const n = (count: number, word: string) =>
+  `${count === 0 ? 'no' : count === 1 ? 'one' : count} ${word}${count === 1 ? '' : 's'}`;
+
+const levels = [
+  {
+    term: 'Evidence',
+    text: 'What was documented: sources, data, observed behavior, test results. Checkable by anyone.',
+  },
+  {
+    term: 'Observation',
+    text: 'What the evidence shows when it is put side by side. A description, not yet an explanation.',
+  },
+  {
+    term: 'Interpretation',
+    text: 'What the observation might mean. Always labelled, always with alternatives considered.',
+  },
+  {
+    term: 'Hypothesis',
+    text: 'A testable statement that should hold if the interpretation is right, and what would contradict it.',
+  },
+  {
+    term: 'Conclusion',
+    text: 'What can reasonably be concluded today, how confident that is, and what would change it.',
+  },
+];
+
+const statuses = [
+  { label: 'Emerging pattern', text: 'Seen in more than one investigation, not yet well supported.' },
+  { label: 'Supported', text: 'Consistent evidence across several investigations.' },
+  { label: 'Contested', text: 'The evidence points in different directions.' },
+  { label: 'Revised', text: 'Changed by new evidence. The change is logged on the page.' },
+];
+---
+
+<Layout
+  title="Findings"
+  description="What FalconProSec's investigations add up to: evidence-based findings and recurring patterns, with the evidence, interpretation and open questions kept separate."
+>
+  <PageHeader
+    kicker="Findings"
+    title="What the investigations add up to"
+    description="A single investigation answers one question. A finding is what can be concluded when several investigations point the same way, or when a new one challenges an earlier conclusion. Each finding links back to the investigations it rests on."
+  />
+
+  <div class="container-site mt-12 space-y-24">
+    <section aria-labelledby="findings-heading">
+      <h2 id="findings-heading" class="sr-only">Published findings</h2>
+      {
+        findings.length > 0 ? (
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {findings.map((f) => (
+              <FindingCard item={f} headingLevel="h3" />
+            ))}
+          </div>
+        ) : (
+          <div class="card flex flex-col gap-6 border-dashed p-8 sm:flex-row sm:items-start">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-line bg-ink text-amber">
+              <Icon name="layers" size={24} />
+            </div>
+            <div class="max-w-2xl">
+              <h3 class="text-xl font-semibold">No findings have been published yet</h3>
+              <p class="mt-2 leading-relaxed text-muted">
+                Findings are written only when the evidence from more than one
+                investigation supports them. So far FalconProSec has published{' '}
+                {n(fullCount, 'full investigation')}
+                {briefCount > 0 && ` and ${n(briefCount, 'brief')}`}, which is
+                not yet enough to conclude anything beyond what each piece says
+                on its own. The first findings will appear here when patterns
+                hold up across investigations.
+              </p>
+              <a href="/investigations" class="btn-secondary mt-6">
+                Read the investigations <Icon name="arrow-right" size={16} />
+              </a>
+            </div>
+          </div>
+        )
+      }
+    </section>
+
+    <section aria-labelledby="levels-heading">
+      <SectionHeader
+        id="levels-heading"
+        kicker="Standards"
+        title="Keeping evidence and interpretation apart"
+        description="Every finding separates these five levels, so a reader can see exactly where the documented facts end and reasoning begins."
+      />
+      <ol class="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
+        {
+          levels.map((l, i) => (
+            <li class="bg-ink p-6">
+              <span class="font-mono text-sm text-primary-text">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p class="mt-3 font-heading font-semibold text-white">{l.term}</p>
+              <p class="mt-2 text-sm leading-relaxed text-muted">{l.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="grid gap-10 lg:grid-cols-[1fr_1.6fr]" aria-labelledby="status-heading">
+      <div>
+        <h2 id="status-heading" class="text-2xl font-semibold sm:text-3xl">
+          How confident each finding is
+        </h2>
+        <p class="mt-3 text-muted">
+          Findings are not permanent. Each one carries a status that changes as
+          evidence accumulates.
+        </p>
+      </div>
+      <dl class="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2">
+        {
+          statuses.map((s) => (
+            <div class="bg-ink p-5">
+              <dt class="font-heading font-semibold text-white">{s.label}</dt>
+              <dd class="mt-1 text-sm leading-relaxed text-muted">{s.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <Disclaimer />
+  </div>
+</Layout>

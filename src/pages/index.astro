@@ -5,6 +5,9 @@ import Badge from '../components/Badge.astro';
 import CTASection from '../components/CTASection.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import EmptyState from '../components/EmptyState.astro';
+import FindingCard from '../components/FindingCard.astro';
+import KnowledgeLoop from '../components/KnowledgeLoop.astro';
+import ResearchQuestionList from '../components/ResearchQuestionList.astro';
 import Icon from '../components/Icon.astro';
 import InvestigationCard from '../components/InvestigationCard.astro';
 import InvestigationQuestion from '../components/InvestigationQuestion.astro';
@@ -12,8 +15,8 @@ import SectionHeader from '../components/SectionHeader.astro';
 import ToolCard from '../components/ToolCard.astro';
 import TopicCard from '../components/TopicCard.astro';
 import { SITE } from '../config/site';
-import { TOPICS, type Term } from '../data/taxonomy';
-import { getInvestigations, getTools, pickFeatured } from '../lib/content';
+import { RESEARCH_QUESTIONS, TOPICS, type Term } from '../data/taxonomy';
+import { getFindings, getInvestigations, getTools, pickFeatured } from '../lib/content';
 import { siteJsonLd } from '../lib/seo';
 
 // Phrases cycled in the hero's "investigating:" line.
@@ -24,6 +27,12 @@ const signals = (TOPICS as readonly Term[]).map(
 const investigations = await getInvestigations();
 const featured = pickFeatured(investigations);
 const latest = investigations.filter((i) => i !== featured).slice(0, 6);
+
+const findings = (await getFindings()).slice(0, 3);
+const agenda = [
+  ...RESEARCH_QUESTIONS.filter((q) => q.status === 'investigating'),
+  ...RESEARCH_QUESTIONS.filter((q) => q.status === 'open'),
+].slice(0, 4);
 
 const tools = await getTools();
 const featuredTool =
@@ -108,11 +117,23 @@ const featuredTool =
     </div>
   </section>
 
+  <!-- How knowledge builds -->
+  <section class="container-site mt-24" aria-labelledby="loop-heading">
+    <SectionHeader
+      id="loop-heading"
+      kicker="How it works"
+      title="Each investigation should leave something to build on"
+      description="Investigations are not published for their own sake. Each one is meant to add evidence, sharpen a pattern or open a better question, so that the work accumulates into knowledge."
+      link={{ href: '/methods', label: 'Methods' }}
+    />
+    <KnowledgeLoop />
+  </section>
+
   <!-- Featured investigation -->
   <section class="container-site mt-20" aria-labelledby="featured-heading">
     <SectionHeader
       id="featured-heading"
-      kicker="Featured investigation"
+      kicker={featured?.data.format === 'brief' ? 'Featured brief' : 'Featured investigation'}
       title="Asking a question, then following the evidence"
       link={{ href: '/investigations', label: 'All investigations' }}
     />
@@ -149,9 +170,10 @@ const featuredTool =
   <section class="container-site mt-24" aria-labelledby="topics-heading">
     <SectionHeader
       id="topics-heading"
-      kicker="Areas of investigation"
-      title="The problems under investigation"
-      description="These aren't specialties to choose between. They're human problems, and each one draws on whatever the question needs: software engineering, security, AI, investigation or research."
+      kicker="Areas of inquiry"
+      title="What FalconProSec is trying to understand"
+      description="Five research directions defined by human problems rather than specialties. Each draws on whichever disciplines the question needs: cybersecurity, software engineering, AI, psychology or behavioral science."
+      link={{ href: '/research', label: 'Research' }}
     />
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {
@@ -162,21 +184,61 @@ const featuredTool =
     </div>
   </section>
 
+  <!-- Research agenda -->
+  <section class="container-site mt-24" aria-labelledby="agenda-heading">
+    <SectionHeader
+      id="agenda-heading"
+      kicker="Research agenda"
+      title="Questions currently being explored"
+      description="Most do not have answers yet. When an investigation takes one on, it is linked here."
+      link={{ href: '/research#agenda-heading', label: 'Full agenda' }}
+    />
+    <ResearchQuestionList questions={agenda} />
+  </section>
+
+  <!-- Findings -->
+  <section class="container-site mt-24" aria-labelledby="findings-heading">
+    <SectionHeader
+      id="findings-heading"
+      kicker="Findings"
+      title="What the investigations add up to"
+      description="Findings document what can be concluded when evidence holds across several investigations, with evidence, interpretation and hypothesis kept separate."
+      link={{ href: '/findings', label: 'About findings' }}
+    />
+    {
+      findings.length > 0 ? (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {findings.map((f) => (
+            <FindingCard item={f} />
+          ))}
+        </div>
+      ) : (
+        <div class="card border-dashed p-6 sm:p-8">
+          <p class="max-w-2xl leading-relaxed text-muted">
+            No findings have been published yet. The first findings will be
+            written when evidence from several investigations points the same
+            way.
+          </p>
+        </div>
+      )
+    }
+  </section>
+
   <!-- Featured tool -->
   <section class="container-site mt-24" aria-labelledby="tool-heading">
     <div
       class="grid gap-8 rounded-2xl border border-line bg-surface/50 p-6 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center"
     >
       <div>
-        <p class="kicker !text-primary-text">Featured tool</p>
+        <p class="kicker !text-primary-text">Tools</p>
         <h2 id="tool-heading" class="mt-3 text-2xl font-semibold sm:text-3xl">
-          Building to understand
+          Built to investigate
         </h2>
         <p class="mt-3 leading-relaxed text-muted">
-          Some questions are easier to understand by building something. These
-          are small tools aimed at risks that reach real people, each one
-          starting from a question. They're built one at a time, and each is
-          clearly marked until it works.
+          Some questions can only be understood by building something: an
+          experiment, a simulator, a prototype. Each tool starts from a
+          research question and is linked to it. They are built one at a time,
+          and each is clearly marked until it works.
         </p>
         <a href="/tools" class="link mt-5 inline-block text-sm">
           See all tools
@@ -221,27 +283,26 @@ const featuredTool =
   <section class="container-site mt-24" aria-labelledby="about-heading">
     <div class="grid gap-10 lg:grid-cols-[1fr_1.3fr]">
       <div>
-        <p class="kicker !text-primary-text">About the site</p>
+        <p class="kicker !text-primary-text">About</p>
         <h2 id="about-heading" class="mt-3 text-2xl font-semibold sm:text-3xl">
-          Why FalconProSec exists
+          Small today, with a clear direction
         </h2>
       </div>
       <div class="space-y-4 text-lg leading-relaxed text-muted">
         <p>
-          Technology is built by engineers, but its consequences are lived by
-          everyone else. AI can now produce a convincing voice, face or message
-          almost for free, and the systems people depend on for healthcare,
-          school, money and public services are increasingly automated.
+          AI can now produce a convincing voice, face or message almost for
+          free, and the systems people depend on are increasingly automated.
+          Many of the risks that follow cannot be understood through technology
+          alone.
         </p>
         <p>
-          Solving customer problems isn't enough. FalconProSec exists to study
-          the human problems emerging where technology, AI, security and human
-          behavior meet, ideally before they become impossible to ignore. It is
-          an evolving space of questions, experiments and findings, with
-          sources listed and corrections made openly.
+          FalconProSec is currently an independent research initiative. Its
+          long-term direction is a multidisciplinary research organisation,
+          one that grows out of the work: accumulated findings, a tested
+          method, and collaboration with people from other fields.
         </p>
         <a href="/about" class="link inline-block text-base">
-          About the person behind it
+          About FalconProSec
         </a>
       </div>
     </div>
@@ -256,7 +317,7 @@ const featuredTool =
         href: '/contact?reason=investigation',
         label: 'Suggest a question',
       }}
-      secondary={{ href: '/about#method', label: 'How investigations work' }}
+      secondary={{ href: '/methods', label: 'How investigations work' }}
     />
     <Disclaimer />
   </section>

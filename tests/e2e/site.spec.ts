@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 const NAV = [
-  'Home',
+  'Research',
   'Investigations',
+  'Findings',
   'Tools',
   'About',
   'Contact',
@@ -10,7 +11,10 @@ const NAV = [
 
 const ROUTES = [
   '/',
+  '/research',
   '/investigations',
+  '/findings',
+  '/methods',
   '/tools',
   '/security-privacy',
   '/technology',
