@@ -4,8 +4,6 @@ const NAV = [
   'Home',
   'Investigations',
   'Tools',
-  'Security & Privacy',
-  'Technology',
   'About',
   'Contact',
 ];

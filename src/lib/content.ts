@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import type { SectionSlug } from '../data/taxonomy';
+import { sectionCategorySlugs, type SectionSlug } from '../data/taxonomy';
 
 export type Investigation = CollectionEntry<'investigations'>;
 export type Article = CollectionEntry<'articles'>;
@@ -19,6 +19,16 @@ export async function getInvestigations(): Promise<Investigation[]> {
     ({ data }) => showDrafts || !data.draft
   );
   return entries.sort(byNewest);
+}
+
+/** Investigations tagged with any category from this section. */
+export async function getSectionInvestigations(
+  section: SectionSlug
+): Promise<Investigation[]> {
+  const slugs = sectionCategorySlugs(section);
+  return (await getInvestigations()).filter((i) =>
+    i.data.categories.some((c) => slugs.includes(c))
+  );
 }
 
 export async function getArticles(section?: SectionSlug): Promise<Article[]> {

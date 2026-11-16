@@ -1,10 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ArticleCard from '../ArticleCard.astro';
+import InvestigationCard from '../InvestigationCard.astro';
+import SectionHeader from '../SectionHeader.astro';
 import EmptyState from '../EmptyState.astro';
 import PageHeader from '../PageHeader.astro';
 import { SECTIONS, type SectionSlug, type Term } from '../../data/taxonomy';
-import { getArticles } from '../../lib/content';
+import { getArticles, getInvestigations } from '../../lib/content';
 
 interface Props {
   section: SectionSlug;
@@ -16,11 +18,14 @@ const section = SECTIONS[slug];
 const articles = (await getArticles(slug)).filter(
   (a) => a.data.category === category.slug
 );
+const investigations = (await getInvestigations()).filter((i) =>
+  i.data.categories.includes(category.slug)
+);
 ---
 
 <Layout
   title={`${category.label} — ${section.label}`}
-  description={`${category.description} Articles on ${category.label.toLowerCase()} from the ${section.label} section.`}
+  description={`${category.description} Investigations and articles on ${category.label.toLowerCase()} from the ${section.label} section.`}
 >
   <PageHeader
     kicker={section.label}
@@ -31,21 +36,38 @@ const articles = (await getArticles(slug)).filter(
       { label: category.label },
     ]}
   />
-  <div class="container-site mt-12">
+  <div class="container-site mt-12 space-y-16">
     {
-      articles.length ? (
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {articles.map((a) => (
-            <ArticleCard article={a} headingLevel="h2" />
-          ))}
-        </div>
-      ) : (
+      investigations.length === 0 && articles.length === 0 ? (
         <EmptyState
           icon="book"
-          title={`No ${category.label} articles yet`}
-          description="Articles in this category will appear here once published."
+          title={`Nothing on ${category.label} yet`}
+          description="Investigations and articles in this category will appear here once published."
           action={{ href: `/${slug}`, label: `Back to ${section.label}` }}
         />
+      ) : (
+        <>
+          {investigations.length > 0 && (
+            <section aria-labelledby="inv-heading">
+              <SectionHeader id="inv-heading" title="Investigations" />
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {investigations.map((item) => (
+                  <InvestigationCard item={item} />
+                ))}
+              </div>
+            </section>
+          )}
+          {articles.length > 0 && (
+            <section aria-labelledby="art-heading">
+              <SectionHeader id="art-heading" title="Articles" />
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {articles.map((a) => (
+                  <ArticleCard article={a} />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
       )
     }
   </div>

@@ -4,6 +4,7 @@ description: 'A reported case involving NVIDIA CEO Jensen Huang shows how social
 question: 'What happens when personal trust intersects with access to sensitive information?'
 pubDate: 2026-11-14
 topic: human-vulnerability
+categories: ['social-engineering', 'security-awareness']
 tags: ['social-engineering', 'insider-risk', 'espionage', 'deception']
 featured: false
 draft: false

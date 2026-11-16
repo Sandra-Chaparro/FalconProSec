@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import Layout from './Layout.astro';
 import ArticleMeta from '../components/ArticleMeta.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CategoryList from '../components/CategoryList.astro';
 import CorrectionsLog from '../components/CorrectionsLog.astro';
 import Disclaimer from '../components/Disclaimer.astro';
 import InvestigationCard from '../components/InvestigationCard.astro';
@@ -12,7 +13,7 @@ import SourcesList from '../components/SourcesList.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import TagList from '../components/TagList.astro';
 import { SITE } from '../config/site';
-import { getTopic } from '../data/taxonomy';
+import { findCategory, getTopic } from '../data/taxonomy';
 import { readingTime, type Investigation } from '../lib/content';
 import { articleJsonLd } from '../lib/seo';
 
@@ -43,7 +44,11 @@ const topic = getTopic(data.topic);
     updatedDate: data.updatedDate,
     url: new URL(Astro.url.pathname, Astro.site ?? SITE.url).href,
     image: data.heroImage?.src,
-    keywords: [topic?.label ?? data.topic, ...data.tags],
+    keywords: [
+      topic?.label ?? data.topic,
+      ...data.categories.map((c) => findCategory(c)?.category.label ?? c),
+      ...data.tags,
+    ],
   })}
 >
   <article>
@@ -70,6 +75,7 @@ const topic = getTopic(data.topic);
         <p class="mt-5 max-w-3xl text-lg leading-relaxed text-muted">
           {data.description}
         </p>
+        <CategoryList categories={data.categories} linked class="mt-6" />
         <div class="mt-8 max-w-3xl">
           <InvestigationQuestion label="The question behind this investigation" question={data.question} />
         </div>

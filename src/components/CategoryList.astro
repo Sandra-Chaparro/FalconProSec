@@ -1,0 +1,46 @@
+---
+/**
+ * The Security & Privacy / Technology categories an investigation is filed
+ * under. Linked on the investigation page (internal links help those
+ * category pages rank); plain text on cards, which are already one link.
+ */
+import { findCategory } from '../data/taxonomy';
+
+interface Props {
+  categories: readonly string[];
+  linked?: boolean;
+  class?: string;
+}
+
+const { categories, linked = false, class: className } = Astro.props;
+const items = categories.flatMap((slug) => {
+  const found = findCategory(slug);
+  return found ? [found] : [];
+});
+---
+
+{
+  items.length > 0 && (
+    <div class:list={['flex flex-wrap items-center gap-2', className]}>
+      <span class="font-mono text-xs text-subtle uppercase">Filed under</span>
+      <ul class="flex flex-wrap gap-2" aria-label="Categories">
+        {items.map(({ section, category }) => (
+          <li>
+            {linked ? (
+              <a
+                href={`/${section}/category/${category.slug}`}
+                class="inline-block rounded-full border border-line-strong px-3.5 py-1.5 text-[0.8125rem] text-muted hover:border-primary hover:text-white"
+              >
+                {category.label}
+              </a>
+            ) : (
+              <span class="rounded-md border border-line px-2 py-0.5 text-xs text-muted">
+                {category.label}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}

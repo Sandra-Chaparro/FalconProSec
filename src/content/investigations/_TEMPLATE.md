@@ -9,6 +9,10 @@ pubDate: 2026-01-01
 # updatedDate: 2026-01-15
 # topic: human-vulnerability | trust-identity | ai-decision-making | human-connections | human-safety
 topic: human-vulnerability
+# Also list it under Security & Privacy / Technology categories (optional), e.g.
+# social-engineering, personal-privacy, security-awareness, online-exposure,
+# artificial-intelligence, ai-security. Full list: SECTIONS in src/data/taxonomy.ts
+categories: []
 tags: ['example-tag']
 # heroImage: ./images/my-image.jpg   # stored next to this file
 # heroAlt: 'Describe the image for screen readers'

@@ -5,12 +5,22 @@ import type { Term } from '../data/taxonomy';
 interface Props {
   term: Term;
   href: string;
-  count?: number;
+  /** Published items in this category, shown as e.g. "1 investigation · 2 articles". */
+  counts?: { investigations: number; articles: number };
   headingLevel?: 'h2' | 'h3';
 }
 
-const { term, href, count, headingLevel = 'h3' } = Astro.props;
+const { term, href, counts, headingLevel = 'h3' } = Astro.props;
 const Heading = headingLevel;
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+const countLabel = counts
+  ? [
+      counts.investigations && plural(counts.investigations, 'investigation'),
+      counts.articles && plural(counts.articles, 'article'),
+    ]
+      .filter(Boolean)
+      .join(' · ') || 'Nothing published yet'
+  : undefined;
 ---
 
 <article class="card-interactive group relative flex h-full flex-col p-6">
@@ -26,12 +36,8 @@ const Heading = headingLevel;
   </Heading>
   <p class="mt-2 text-sm leading-relaxed text-muted">{term.description}</p>
   {
-    count !== undefined && (
-      <p class="mt-auto pt-4 font-mono text-xs text-subtle">
-        {count === 0
-          ? 'No articles yet'
-          : `${count} ${count === 1 ? 'article' : 'articles'}`}
-      </p>
+    countLabel && (
+      <p class="mt-auto pt-4 font-mono text-xs text-subtle">{countLabel}</p>
     )
   }
 </article>

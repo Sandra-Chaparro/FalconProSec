@@ -172,6 +172,27 @@ export const SECTION_SLUGS = Object.keys(SECTIONS) as [
   ...SectionSlug[],
 ];
 
+/** Every category slug across all sections (they are unique site-wide). */
+export const CATEGORY_SLUGS = Object.values(SECTIONS).flatMap((s) =>
+  s.categories.map((c) => c.slug)
+) as [string, ...string[]];
+
+/** Category slugs that belong to a section. */
+export function sectionCategorySlugs(section: SectionSlug): string[] {
+  return SECTIONS[section].categories.map((c) => c.slug);
+}
+
+/** Find a category by slug in any section. */
+export function findCategory(
+  slug: string
+): { section: SectionSlug; category: Term } | undefined {
+  for (const [section, s] of Object.entries(SECTIONS)) {
+    const category = (s.categories as readonly Term[]).find((c) => c.slug === slug);
+    if (category) return { section: section as SectionSlug, category };
+  }
+  return undefined;
+}
+
 export function getTopic(slug: string): Term | undefined {
   return TOPICS.find((t) => t.slug === slug);
 }
@@ -208,11 +229,11 @@ export const OPEN_QUESTIONS: { area: TopicSlug; question: string }[] = [
     question: 'When an automated system makes a decision about someone, what would they need in order to understand or challenge it?',
   },
   {
-    area: 'human-connection',
+    area: 'human-connections',
     question: 'What design choices make an AI companion supportive, and which ones make it manipulative?',
   },
   {
-    area: 'access-opportunity',
+    area: 'human-vulnerability',
     question: 'Which security practices quietly assume a level of access, language or ability that many people do not have?',
   },
   {

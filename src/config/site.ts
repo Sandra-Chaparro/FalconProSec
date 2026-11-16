@@ -22,8 +22,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Investigations', href: '/investigations' },
   { label: 'Tools', href: '/tools' },
-  { label: 'Security & Privacy', href: '/security-privacy' },
-  { label: 'Technology', href: '/technology' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];
@@ -34,8 +32,6 @@ export const FOOTER_LINKS: { heading: string; links: NavItem[] }[] = [
     links: [
       { label: 'Investigations', href: '/investigations' },
       { label: 'Tools', href: '/tools' },
-      { label: 'Security & Privacy', href: '/security-privacy' },
-      { label: 'Technology', href: '/technology' },
     ],
   },
   {

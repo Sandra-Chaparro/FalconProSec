@@ -1,12 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ArticleCard from '../ArticleCard.astro';
+import InvestigationCard from '../InvestigationCard.astro';
 import EmptyState from '../EmptyState.astro';
 import PageHeader from '../PageHeader.astro';
 import SectionHeader from '../SectionHeader.astro';
 import TopicCard from '../TopicCard.astro';
 import { SECTIONS, type SectionSlug } from '../../data/taxonomy';
-import { getArticles } from '../../lib/content';
+import { getArticles, getSectionInvestigations } from '../../lib/content';
 
 interface Props {
   section: SectionSlug;
@@ -16,8 +17,11 @@ interface Props {
 const { section: slug, description } = Astro.props;
 const section = SECTIONS[slug];
 const articles = await getArticles(slug);
-const countFor = (category: string) =>
-  articles.filter((a) => a.data.category === category).length;
+const investigations = await getSectionInvestigations(slug);
+const countsFor = (category: string) => ({
+  investigations: investigations.filter((i) => i.data.categories.includes(category)).length,
+  articles: articles.filter((a) => a.data.category === category).length,
+});
 ---
 
 <Layout title={section.label} description={description}>
@@ -31,12 +35,30 @@ const countFor = (category: string) =>
           <TopicCard
             term={c}
             href={`/${slug}/category/${c.slug}`}
-            count={countFor(c.slug)}
+            counts={countsFor(c.slug)}
           />
         ))
       }
     </div>
   </section>
+
+  {
+    investigations.length > 0 && (
+      <section class="container-site mt-20" aria-labelledby="investigations-heading">
+        <SectionHeader
+          id="investigations-heading"
+          kicker="Investigations"
+          title={`Investigations in ${section.label}`}
+          link={{ href: '/investigations', label: 'All investigations' }}
+        />
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {investigations.map((item) => (
+            <InvestigationCard item={item} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <section class="container-site mt-20" aria-labelledby="latest-heading">
     <SectionHeader id="latest-heading" kicker="Latest" title={`Latest in ${section.label}`} />

@@ -1,7 +1,12 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { file, glob } from 'astro/loaders';
-import { SECTIONS, SECTION_SLUGS, TOPIC_SLUGS } from './data/taxonomy';
+import {
+  CATEGORY_SLUGS,
+  SECTIONS,
+  SECTION_SLUGS,
+  TOPIC_SLUGS,
+} from './data/taxonomy';
 
 // Files starting with "_" (e.g. _TEMPLATE.md) are ignored.
 const MARKDOWN = '**/[^_]*.{md,mdx}';
@@ -36,6 +41,9 @@ const investigations = defineCollection({
         pubDate: z.coerce.date(),
         updatedDate: z.coerce.date().optional(),
         topic: z.enum(TOPIC_SLUGS),
+        // Section categories (e.g. social-engineering) this investigation
+        // also appears under in Security & Privacy / Technology.
+        categories: z.array(z.enum(CATEGORY_SLUGS)).default([]),
         tags: z.array(z.string()).default([]),
         heroImage: image().optional(),
         heroAlt: z.string().optional(),
